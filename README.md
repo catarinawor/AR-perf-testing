@@ -1,5 +1,5 @@
 # Performance testing SS3 with autocorrelated recruitment
-This repository is designed to house and allow for group editing of all files related to this project.
+This repository is designed to house and allow for group editing of all files related to this project. The repository is currently set to "private."  Once the paper is published, we will set the reposity to "public" so that others may replicate our results and/or modify our code for extended work related to this project.
 
 # General requests for editing etiquette
 Please upload any edited files to this reposity when your edits are complete.
