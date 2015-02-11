@@ -29,3 +29,11 @@ To install GitHub on Windows systems, see https://windows.github.com/
 You will need to install a local version of the executable GUI in order to download files to edit.  
 
 GitHub help files can be found here: https://help.github.com/
+
+#List of authors.  Order subject to change
+
+Councill, E.
+Johnson, K.
+Thorson, J.
+Brooks, E.
+Methot, R.
