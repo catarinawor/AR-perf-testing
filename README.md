@@ -21,3 +21,9 @@ You will need to download two files located here: https://www.dropbox.com/sh/zg0
 You will also need to change your file path.  To do this, consult the vignette for ss3sim available here: http://cran.r-project.org/web/packages/ss3sim/vignettes/ss3sim-vignette.pdf
 
 You should be able to run the code files at this point.  If you have any difficulty doing so, please let me, Elizabeth, or Kelli know.
+
+# Installing GitHub and editing text files within GitHub
+
+To install GitHub on Windows systems, see https://windows.github.com/
+
+You will need to install a local version of the executable GUI in order to download files to edit.  Text files may also be editing in Internet version of GitHub directly.
