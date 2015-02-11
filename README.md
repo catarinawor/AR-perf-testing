@@ -26,4 +26,6 @@ You should be able to run the code files at this point.  If you have any difficu
 
 To install GitHub on Windows systems, see https://windows.github.com/
 
-You will need to install a local version of the executable GUI in order to download files to edit.  Text files may also be editing in Internet version of GitHub directly.
+You will need to install a local version of the executable GUI in order to download files to edit.  
+
+GitHub help files can be found here: https://help.github.com/
