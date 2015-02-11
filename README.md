@@ -32,8 +32,4 @@ GitHub help files can be found here: https://help.github.com/
 
 #List of authors.  Order subject to change
 
-Councill, E.
-Johnson, K.
-Thorson, J.
-Brooks, E.
-Methot, R.
+Councill, E., Johnson, K., Thorson, J., Brooks, E., Methot, R.
