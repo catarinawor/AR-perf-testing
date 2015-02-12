@@ -2,12 +2,12 @@
 This repository is designed to house and allow for group editing of all files related to this project. The repository is currently set to "private."  Once the paper is published, we will set the reposity to "public" so that others may replicate our results and/or modify our code for extended work related to this project.
 
 # General requests for editing etiquette
-Please upload any edited files to this reposity when your edits are complete.
+Please upload any edited files to this repository when your edits are complete.
 
-Include your initials in the comments section of the code along with date of your edit and a brief summary of the changes you made as well as including this information on your "commit" update descriptions.
+Include your initials in the comments section of the code along with date of your edit and a brief summary of the changes you made.
 
 # Word documents
-GitHub does not show line-by-line editorial changes for Word Documents, so please have "track changes" feature enabled when you edit the report/paper file.
+GitHub does not show line-by-line editorial changes for Word Documents, so please have the "track changes" feature enabled when you edit the report/paper file.
 
 # Instructions for installing the correct version of ss3sim
 You will need to install a new version of ss3sim in order to properly run the code that produces the plots and output files.  To do this, use 
