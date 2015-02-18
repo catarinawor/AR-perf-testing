@@ -1,0 +1,33 @@
+Please use the following text file to share comments/notes. 
+
+December 29, 2014
+
+Status update: new timeline added to shared folder. (EC)  
+
+December 30, 2014
+
+Uploaded fixed-seed output files and new code. (EC)
+
+January 8, 2015
+
+Meeting with Kelli to troubleshoot plotting and bias adjustment issues.
+Found some errors with latest version of ss3sim which are going to be addressed by Kelli and other members of the ss3sim development team
+Kelli to provide some code she already had written for a previous paper to produce plots for relative error associated with projections.
+Kelli recommends using github installation of ss3sim instead of CRAN version for bias correction runs.  Detailed instructions for installing from github can be found here: https://github.com/ss3sim/ss3sim (NOTE: you will need to update your windows path to install this version.  Instructions are included at the bottom of the linked page or in the ss3sim vignette). (EC)
+
+January 11, 2015
+
+Kelli has done some excellent work on the plotting tools and bias adjustment.  See new simulation files named “AR_Simulations_KFJ.r”, “AR_generateCaseFiles.r”, and “plot_KFJ.r” in the CODE folder.  You will need to install a new version of ss3sim.  To do so, type, “devtools::install_github("ss3sim/ss3sim", "master") into R.  You will need the devtools package installed to do this. (EC)
+
+January 13, 2015
+ 
+Implemented bias adjustments based on Methot and Taylor (2011) for recruitment deviations.  Updated code file to be added at the end of the day.  Running new simulations with correct rec devs and will update output files as soon as possible. (EC)
+
+January 31, 2015
+
+Latest version of code successfully running with 100 replicates and 20 iterations of bias adjustments.  Bias correction applied to recruitment deviations as per Thorson and Kristensen (in review). Plot tools running. Waiting for full set of output data to update files. (EC)
+
+February 11, 2015
+
+Begin transfer of file to GitHub site: https://github.com/ElizabethCouncill/AR-perf-testing
+Having some trouble with syncing files, but am working with GitHub support to troubleshoot. (EC)
