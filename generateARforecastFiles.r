@@ -38,10 +38,14 @@ library("r4ss")
 library("ss3models")
 
 # Set correct directories
-d <- system.file("extdata", package = "ss3sim")
-case_folder <- paste0(d,"/eg-cases")
-om <- paste0(d,"/models/cod-om")
-em <- paste0(d,"/models/cod-em")
+case_folder <- file.path(getwd(),"cases")
+dir.create(case_folder, recursive = TRUE, showWarnings = FALSE)
+file.copy(system.file("cases", package = "ss3models"), ".", recursive = TRUE)
+
+file.copy(system.file("models", "cod", "om", package = "ss3models"), ".", recursive = TRUE)
+file.copy(system.file("models", "cod", "em", package = "ss3models"), ".", recursive = TRUE)
+om <- "om"
+em <- "em"
 
 #Fix the bias adjustment line in EM such that no bias adjustment is run
 # i.e., set it equal to 1, which uses pre-2009 SS methods
