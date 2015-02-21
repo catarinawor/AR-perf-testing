@@ -47,10 +47,10 @@ for(f in 1:length(my.forecasts)){
     "natM_type; 1Parm",
     "natM_n_breakpoints; NULL",
     "natM_lorenzen; NULL",
-    "natM_val; c(NA, 1)",
-    "par_name; LnQ_base_3_CPUE",
+    "natM_val; c(NA, -1)",
+    "par_name; NULL",
     "par_int; NA",
-    "par_phase; -1",
+    "par_phase; NULL",
     paste("forecast_num;", my.forecasts[f])), file.current)
     close(file.current)
 }
