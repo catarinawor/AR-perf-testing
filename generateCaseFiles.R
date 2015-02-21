@@ -36,7 +36,9 @@ ignore <- sapply(neededobjects, function(x) {
 #### Generate case files and place them inside the eg-cases folder for ss3sim
 ###############################################################################
 ###############################################################################
-wd.casefiles <- system.file("extdata/eg-cases", package = "ss3sim")
+wd.casefiles <- "cases"
+file.rename(file.path(wd.casefiles, "index0-cod.txt"),
+            file.path(wd.casefiles, "index30-cod.txt"))
 
 ## Generate casefiles for different lengths of forecasting using E
 for(f in 1:length(my.forecasts)){

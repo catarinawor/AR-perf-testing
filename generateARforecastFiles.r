@@ -70,7 +70,7 @@ my.forecasts <- c(0, 1, 3, 5, 10, 20)
 # change the age at 50% maturity from the true value
 my.biology <- c(0, -10.0)
 # Write casefiles, this assumes your working directory is currently where you opened this file.
-source("C:/Users/Elizabeth.Councill/Desktop/Main Project/AR_generateCaseFiles (1).R")
+source("generateCaseFiles.R")
 
 # Set scenario names and classify which letters are used
 # using my.cases allows the removal of M from the scenario names, which is
