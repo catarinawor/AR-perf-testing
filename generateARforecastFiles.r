@@ -55,10 +55,10 @@ dir.ss3sim <- system.file("", package = "ss3sim")
 # If it does then you can delete the else statement and the if around the following
 # line.
 if (dir.ss3sim == 'C:/Program Files/R/R-3.1.2/library/ss3sim') {
-    setwd(dir.ss3sim)
-    message("Using dir.ss3sim worked you can now delete the if and else portions.")
+setwd(dir.ss3sim)
+message("Using dir.ss3sim worked you can now delete the if and else portions.")
 } else {
-    setwd('C:/Program Files/R/R-3.1.2/library/ss3sim')
+setwd('C:/Program Files/R/R-3.1.2/library/ss3sim')
 }
 
 # Generate rec devs for cod
@@ -83,7 +83,7 @@ source("C:/Users/Elizabeth.Councill/Desktop/Main Project/AR_generateCaseFiles (1
 # used for time-varying natural mortality
 # D == data; F = fishing; R = retrospective run; E = number of forecast years
 my.scenarios <- expand_scenarios(cases = list(D = 0, E = 1:length(my.forecasts),
-                                 F = 0, R = 0), species = "cod")
+                         F = 0, R = 0), species = "cod")
 my.cases <- list(D = c("agecomp", "lcomp", "index"), E = "E", F = "F", R = "R")
 
 # Run ss3sim using prescribed rec devs
@@ -94,52 +94,52 @@ my.cases <- list(D = c("agecomp", "lcomp", "index"), E = "E", F = "F", R = "R")
 # This gives the same seed for the each iteration of the different AR levels
 sppname.store <- list(); counter <- 0
 for(arindex in seq_along(AR)){
-	counter <- counter + 1
-	SDcond = SDmarg *sqrt(1 - AR[arindex])
-	# Set matrix of rec devs as "Eps"
-    # Matrix must have one row for every year in the simulation
-    # and one column for every iteration I would think that
-    Eps <- matrix(0, nrow = 100, ncol = N+NB)
-    #Eps <- matrix(0, nrow = 100, ncol = N)
-    Eps_s <- matrix(0, nrow = NROW(Eps), ncol = 1)
-    # Loop generate rec devs and save to single matrix, "Eps"
-		for (i in 1:NCOL(Eps)) {
-			set.seed(i)
-			# Bias correction added
-			Eps_k = rnorm(NROW(Eps), mean = -SDcond^2/2, sd = SDcond)
-			for (t in 2:NROW(Eps)) {
-				Eps_s[1] <-Eps_k[1]
-				Eps_s[t] <- Eps_s[t-1] * AR[arindex] + Eps_k[t]
-			}
-			Eps[, i] <- Eps_s
-		}
-		#OPTIONAL: Check for bias correction (uncomment below two lines)
-		#bias_test<-rowMeans(exp(Eps))
-		#plot(bias_test)
-	for(bias in 0:1){
-        # If bias == 0, no bias adjustment is performed
-        # If bias == 1, bias adjustment routines are done prior to the iterations
-		# Run scenarios
-		# Scenarios will be renamed based on whether or not bias adjustment was run
-		sppname <- paste0(letters[arindex], ifelse(bias == 0, "nb", "yb"))
-		sppname.store[[counter]] <- sppname
-		run_ss3sim(iterations = 1:N, scenarios = my.scenarios, case_files = my.cases,
-    	case_folder = case_folder, om_dir = om, em_dir = em,
-	    bias_adjust = ifelse(bias == 0, FALSE, TRUE), bias_nsim = NB,
-	    user_recdevs = Eps, user_recdevs_warn = FALSE, show.output.on.console = FALSE)
-        # Move results
-        # For each scenario move the results to the folder copies and change the name
-        for(q in seq_along(my.scenarios)){
-        	wd.runs <- getwd()
-        	wd.copy <- "copies"
-        	dir.create(wd.copy, showWarnings = FALSE)
-        	file.copy(my.scenarios[q], wd.copy, recursive = TRUE)
-        	setwd(wd.copy)
-            file.rename(my.scenarios[q], gsub("cod", sppname, my.scenarios[q]))
-            setwd(wd.runs)
-            unlink(my.scenarios[q], recursive = TRUE)
-        }
+counter <- counter + 1
+SDcond = SDmarg *sqrt(1 - AR[arindex])
+# Set matrix of rec devs as "Eps"
+# Matrix must have one row for every year in the simulation
+# and one column for every iteration I would think that
+Eps <- matrix(0, nrow = 100, ncol = N+NB)
+#Eps <- matrix(0, nrow = 100, ncol = N)
+Eps_s <- matrix(0, nrow = NROW(Eps), ncol = 1)
+# Loop generate rec devs and save to single matrix, "Eps"
+for (i in 1:NCOL(Eps)) {
+	set.seed(i)
+	# Bias correction added
+	Eps_k = rnorm(NROW(Eps), mean = -SDcond^2/2, sd = SDcond)
+	for (t in 2:NROW(Eps)) {
+		Eps_s[1] <-Eps_k[1]
+		Eps_s[t] <- Eps_s[t-1] * AR[arindex] + Eps_k[t]
 	}
+	Eps[, i] <- Eps_s
+}
+#OPTIONAL: Check for bias correction (uncomment below two lines)
+#bias_test<-rowMeans(exp(Eps))
+#plot(bias_test)
+for(bias in 0:1){
+# If bias == 0, no bias adjustment is performed
+# If bias == 1, bias adjustment routines are done prior to the iterations
+# Run scenarios
+# Scenarios will be renamed based on whether or not bias adjustment was run
+sppname <- paste0(letters[arindex], ifelse(bias == 0, "nb", "yb"))
+sppname.store[[counter]] <- sppname
+run_ss3sim(iterations = 1:N, scenarios = my.scenarios, case_files = my.cases,
+case_folder = case_folder, om_dir = om, em_dir = em,
+bias_adjust = ifelse(bias == 0, FALSE, TRUE), bias_nsim = NB,
+user_recdevs = Eps, user_recdevs_warn = FALSE, show.output.on.console = FALSE)
+# Move results
+# For each scenario move the results to the folder copies and change the name
+for(q in seq_along(my.scenarios)){
+	wd.runs <- getwd()
+	wd.copy <- "copies"
+	dir.create(wd.copy, showWarnings = FALSE)
+	file.copy(my.scenarios[q], wd.copy, recursive = TRUE)
+	setwd(wd.copy)
+    file.rename(my.scenarios[q], gsub("cod", sppname, my.scenarios[q]))
+    setwd(wd.runs)
+    unlink(my.scenarios[q], recursive = TRUE)
+}
+}
 }
 
 # Read in the results, no need to specify scenarios if you want the results for everything
