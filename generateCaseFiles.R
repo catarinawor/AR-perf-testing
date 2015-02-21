@@ -6,7 +6,7 @@
 ####Lastupdate : 2015-01-08
 ####Purpose    : To create casefiles for ss3sim
 ####Packages   : ss3sim
-####Inputs     : 
+####Inputs     :
 ####Outputs    :
 ####Remarks    : Character width = 80
 #-----------------------------------------------------------------------------#
@@ -20,11 +20,12 @@
 ###############################################################################
 ###############################################################################
 neededobjects <- c("my.forecasts", "my.biology")
-sapply(neededobjects, function(x) {
+
+ignore <- sapply(neededobjects, function(x) {
     if (!exists(x)) {
     stop(paste0("\n\n Error message from KFJ:\n",
                 "AR_generateCaseFiles.R should be called from the script",
-                "AR_Simulations_KFJ.R.\n", 
+                "AR_Simulations_KFJ.R.\n",
                 "\"", x, "\" is part of AR_Simulations_KFJ.R, and was not found."))
 }
 })
@@ -39,7 +40,7 @@ wd.casefiles <- system.file("extdata/eg-cases", package = "ss3sim")
 
 ## Generate casefiles for different lengths of forecasting using E
 for(f in 1:length(my.forecasts)){
-    file.current <- file(paste0(wd.casefiles, "/E", f, "-cod.txt"), 
+    file.current <- file(paste0(wd.casefiles, "/E", f, "-cod.txt"),
                          open = "w")
     writeLines(c(
     "# description: Fixed M, no qSurvey, w a given forecast number",
@@ -57,7 +58,7 @@ for(f in 1:length(my.forecasts)){
 ## Generate casefiles for different levels of age at 50% maturity
 for(b in my.biology){
     counter <- which(my.biology == b) - 1
-    file.current <- file(paste0(wd.casefiles, "/B", counter, "-cod.txt"), 
+    file.current <- file(paste0(wd.casefiles, "/B", counter, "-cod.txt"),
                          open = "w")
     writeLines(c(
     "# A case file to change the age at 50% maturity",
