@@ -27,12 +27,15 @@
 ###############################################
 
 # If necessary install / or update ss3sim package
-#devtools::install_github("ss3sim/ss3sim", "master") #beta
+devtools::install_github("ss3sim/ss3sim", "master") #beta
+devtools::install_github("r4ss/r4ss", ref = "master")
+devtools::install_github("ss3sim/ss3models", ref = "master")
 #install.packages("ss3sim") #CRAN
 
 # Call necessary library packages
 library("ss3sim")
 library("r4ss")
+library("ss3models")
 
 # Set correct directories
 d <- system.file("extdata", package = "ss3sim")
