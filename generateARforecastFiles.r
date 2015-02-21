@@ -37,6 +37,11 @@ library("ss3sim")
 library("r4ss")
 library("ss3models")
 
+# To run in parallel
+library(doParallel)
+registerDoParallel(cores = 3)
+library(foreach)
+
 # Set correct directories
 case_folder <- file.path(getwd(),"cases")
 dir.create(case_folder, recursive = TRUE, showWarnings = FALSE)
@@ -117,10 +122,13 @@ for(bias in 0:1){
 # Scenarios will be renamed based on whether or not bias adjustment was run
 sppname <- paste0(letters[arindex], ifelse(bias == 0, "nb", "yb"))
 sppname.store[[counter]] <- sppname
-run_ss3sim(iterations = 1:N, scenarios = my.scenarios, case_files = my.cases,
-case_folder = case_folder, om_dir = om, em_dir = em,
-bias_adjust = ifelse(bias == 0, FALSE, TRUE), bias_nsim = NB,
-user_recdevs = Eps, user_recdevs_warn = FALSE, show.output.on.console = FALSE)
+        for (sc in seq_along(my.scenarios)) {
+          run_ss3sim(iterations = 1:N, scenarios = my.scenarios[sc], case_files = my.cases,
+            case_folder = case_folder, om_dir = om, em_dir = em,
+            bias_adjust = ifelse(bias == 0, FALSE, TRUE), bias_nsim = NB,
+            user_recdevs = Eps, user_recdevs_warn = FALSE, show.output.on.console = FALSE,
+            parallel = TRUE, parallel_iterations = TRUE)
+        }
 # Move results
 # For each scenario move the results to the folder copies and change the name
 for(q in seq_along(my.scenarios)){
