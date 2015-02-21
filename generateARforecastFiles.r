@@ -63,7 +63,7 @@ writeLines(emctl, file.path(em, "codEM.ctl"))
 # Generate rec devs for cod
 SDmarg = 0.6
 # Set level of autocorrelation
-AR = 0
+AR = c(0.25, 0.75)
 
 # Set number of iterations (replicates)
 N = 100
