@@ -55,19 +55,6 @@ biasline <- strsplit(emctl[changeline], "#")[[1]][2]
 emctl[changeline] <- paste(1, biasline, sep = " #")
 writeLines(emctl, file.path(em, "codEM.ctl"))
 
-# ss3sim requires the current working directory to be the package library folder in which ss3sim is installed
-# Find ss3sim directory (which will be universal on all computers using the following)
-dir.ss3sim <- system.file("", package = "ss3sim")
-# TODO(Eliza) test the next line on your computer and make sure it gives you TRUE
-# If it does then you can delete the else statement and the if around the following
-# line.
-if (dir.ss3sim == 'C:/Program Files/R/R-3.1.2/library/ss3sim') {
-setwd(dir.ss3sim)
-message("Using dir.ss3sim worked you can now delete the if and else portions.")
-} else {
-setwd('C:/Program Files/R/R-3.1.2/library/ss3sim')
-}
-
 # Generate rec devs for cod
 SDmarg = 0.6
 # Set level of autocorrelation
