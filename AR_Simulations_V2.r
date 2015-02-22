@@ -58,11 +58,11 @@ dir.create(wd.copy, showWarnings = FALSE)
 
 #Fix the bias adjustment line in EM such that no bias adjustment is run
 # i.e., set it equal to 1, which uses pre-2009 SS methods
-emctl <- readLines(file.path(em, "codEM.ctl"))
+emctl <- readLines(file.path(em, "ss3.ctl"))
 changeline <- grep("#_max_bias_adj_in_MPD", emctl)
 biasline <- strsplit(emctl[changeline], "#")[[1]][2]
 emctl[changeline] <- paste(-1, biasline, sep = " #")
-writeLines(emctl, file.path(em, "codEM.ctl"))
+writeLines(emctl, file.path(em, "ss3.ctl"))
 
 # Generate rec devs for cod
 SDmarg = 0.6
