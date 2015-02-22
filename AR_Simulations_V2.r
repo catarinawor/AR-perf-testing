@@ -61,7 +61,7 @@ dir.create(wd.copy, showWarnings = FALSE)
 emctl <- readLines(file.path(em, "codEM.ctl"))
 changeline <- grep("#_max_bias_adj_in_MPD", emctl)
 biasline <- strsplit(emctl[changeline], "#")[[1]][2]
-emctl[changeline] <- paste(1, biasline, sep = " #")
+emctl[changeline] <- paste(-1, biasline, sep = " #")
 writeLines(emctl, file.path(em, "codEM.ctl"))
 
 # Generate rec devs for cod
