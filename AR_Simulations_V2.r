@@ -137,12 +137,9 @@ for(arindex in seq_along(AR)){
         # For each scenario move the results to the folder copies and change the name
         for(q in seq_along(my.scenarios)){
             wd.runs <- getwd()
-            wd.copy <- "copies"
-            dir.create(wd.copy, showWarnings = FALSE)
             file.copy(my.scenarios[q], wd.copy, recursive = TRUE)
-            setwd(wd.copy)
-            file.rename(my.scenarios[q], gsub("cod", sppname, my.scenarios[q]))
-            setwd(wd.runs)
+            file.rename(my.scenarios[q],
+                        file.path("copies", gsub("cod", sppname, my.scenarios[q])))
             unlink(my.scenarios[q], recursive = TRUE)
         }
     }
