@@ -132,7 +132,8 @@ for(arindex in seq_along(AR)){
         case_folder = case_folder, om_dir = om, em_dir = em,
         bias_adjust = ifelse(bias == 0, FALSE, TRUE), bias_nsim = NB,
         user_recdevs = Eps, user_recdevs_warn = FALSE, show.output.on.console = FALSE,
-        parallel = doparallel, parallel_iterations = doparallel)
+        parallel = doparallel, parallel_iterations = doparallel,
+        sleep = 30)
         # Move results
         # For each scenario move the results to the folder copies and change the name
         for(q in seq_along(my.scenarios)){
