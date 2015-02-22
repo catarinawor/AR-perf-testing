@@ -87,9 +87,9 @@ source("generateCaseFiles.R")
 # using my.cases allows the removal of M from the scenario names, which is
 # used for time-varying natural mortality
 # D == data; F = fishing; R = retrospective run; E = number of forecast years
-my.scenarios <- expand_scenarios(cases = list(D = 0, E = 1:length(my.forecasts),
-                                 F = 0, R = 0), species = "cod")
-my.cases <- list(D = c("agecomp", "lcomp", "index"), E = "E", F = "F", R = "R")
+my.scenarios <- expand_scenarios(cases = list(D = 30, E = 1:length(my.forecasts),
+                                 F = 0), species = "cod")
+my.cases <- list(D = c("agecomp", "lcomp", "index"), E = "E", F = "F")
 
 # Run ss3sim using prescribed rec devs
 #
