@@ -27,18 +27,34 @@
 ###############################################
 
 # If necessary install / or update ss3sim package
-#devtools::install_github("ss3sim/ss3sim", "master") #beta
+devtools::install_github("ss3sim/ss3sim", "master") #beta
+devtools::install_github("ss3sim/ss3models", "master") #beta
+devtools::install_github("r4ss/r4ss", "master") #beta
+
 #install.packages("ss3sim") #CRAN
 
 # Call necessary library packages
 library("ss3sim")
+library("ss3models")
 library("r4ss")
 
+# To run in parallel
+library(doParallel)
+registerDoParallel(cores = 3)
+library(foreach)
+doparallel <- TRUE
+
 # Set correct directories
-d <- system.file("extdata", package = "ss3sim")
-case_folder <- paste0(d,"/eg-cases")
-om <- paste0(d,"/models/cod-om")
-em <- paste0(d,"/models/cod-em")
+case_folder <- file.path(getwd(),"cases")
+dir.create(case_folder, recursive = TRUE, showWarnings = FALSE)
+file.copy(system.file("cases", package = "ss3models"), ".", recursive = TRUE)
+
+file.copy(system.file("models", "cod", "om", package = "ss3models"), ".", recursive = TRUE)
+file.copy(system.file("models", "cod", "em", package = "ss3models"), ".", recursive = TRUE)
+om <- "om"
+em <- "em"
+wd.copy <- "copies"
+dir.create(wd.copy, showWarnings = FALSE)
 
 #Fix the bias adjustment line in EM such that no bias adjustment is run
 # i.e., set it equal to 1, which uses pre-2009 SS methods
@@ -47,19 +63,6 @@ changeline <- grep("#_max_bias_adj_in_MPD", emctl)
 biasline <- strsplit(emctl[changeline], "#")[[1]][2]
 emctl[changeline] <- paste(1, biasline, sep = " #")
 writeLines(emctl, file.path(em, "codEM.ctl"))
-
-# ss3sim requires the current working directory to be the package library folder in which ss3sim is installed
-# Find ss3sim directory (which will be universal on all computers using the following)
-dir.ss3sim <- system.file("", package = "ss3sim")
-# TODO(Eliza) test the next line on your computer and make sure it gives you TRUE
-# If it does then you can delete the else statement and the if around the following
-# line.
-if (dir.ss3sim == 'C:/Program Files/R/R-3.1.2/library/ss3sim') {
-    setwd(dir.ss3sim)
-    message("Using dir.ss3sim worked you can now delete the if and else portions.")
-} else {
-    setwd('C:/Program Files/R/R-3.1.2/library/ss3sim')
-}
 
 # Generate rec devs for cod
 SDmarg = 0.6
@@ -75,8 +78,10 @@ NB = 20
 my.forecasts <- c(0, 1, 3, 5, 10, 20)
 # change the age at 50% maturity from the true value
 my.biology <- c(0, -10.0)
-# Write casefiles, this assumes your working directory is currently where you opened this file.
-#source("C:/Users/Elizabeth.Councill/Desktop/Main Project/AR_generateCaseFiles (1).R")
+
+# Write casefiles, this assumes your working directory is currently
+# where you opened this file.
+source("generateCaseFiles.R")
 
 # Set scenario names and classify which letters are used
 # using my.cases allows the removal of M from the scenario names, which is
@@ -126,7 +131,8 @@ for(arindex in seq_along(AR)){
         run_ss3sim(iterations = 1:N, scenarios = my.scenarios, case_files = my.cases,
         case_folder = case_folder, om_dir = om, em_dir = em,
         bias_adjust = ifelse(bias == 0, FALSE, TRUE), bias_nsim = NB,
-        user_recdevs = Eps, user_recdevs_warn = FALSE, show.output.on.console = FALSE)
+        user_recdevs = Eps, user_recdevs_warn = FALSE, show.output.on.console = FALSE,
+        parallel = doparallel, parallel_iterations = doparallel)
         # Move results
         # For each scenario move the results to the folder copies and change the name
         for(q in seq_along(my.scenarios)){
@@ -145,6 +151,6 @@ for(arindex in seq_along(AR)){
 # Read in the results, no need to specify scenarios if you want the results for everything
 # use overwrite_files = FALSE, if some results have already been read and you just want to update
 # with the newest scenarios that were ran.
-setwd("//nwcfile/FRAM/Users/Elizabeth.Councill/Main Project Files/compiled output")
+setwd("copies")
 get_results_all(overwrite = FALSE)
 
