@@ -66,9 +66,9 @@ SDmarg = 0.6
 AR <- c(0, 0.25, 0.5, 0.75, 0.9)
 
 # Set number of iterations (replicates)
-N = 100
+N = 2
 # Set number of bias iterations
-NB = 10
+NB = 2
 
 # Set number of forecast years
 my.forecasts <- c(0, 1, 3, 5, 10, 20)
@@ -115,7 +115,7 @@ for (i in 1:NCOL(Eps)) {
 #OPTIONAL: Check for bias correction (uncomment below two lines)
 #bias_test<-rowMeans(exp(Eps))
 #plot(bias_test)
-for(bias in 0:1){
+for(bias in c(FALSE, TRUE)){
 # If bias == 0, no bias adjustment is performed
 # If bias == 1, bias adjustment routines are done prior to the iterations
 # Run scenarios
@@ -125,7 +125,7 @@ sppname.store[[counter]] <- sppname
         for (sc in seq_along(my.scenarios)) {
           run_ss3sim(iterations = 1:N, scenarios = my.scenarios[sc], case_files = my.cases,
             case_folder = case_folder, om_dir = om, em_dir = em,
-            bias_adjust = ifelse(bias == 0, FALSE, TRUE), bias_nsim = NB,
+            bias_adjust = bias, bias_nsim = NB,
             user_recdevs = Eps, user_recdevs_warn = FALSE, show.output.on.console = FALSE,
             parallel = TRUE, parallel_iterations = TRUE)
         }
@@ -147,4 +147,4 @@ for(q in seq_along(my.scenarios)){
 # Read in the results, no need to specify scenarios if you want the results for everything
 # use overwrite_files = FALSE, if some results have already been read and you just want to update
 # with the newest scenarios that were ran.
-get_results_all("copies", overwrite = FALSE)
+get_results_all("copies", overwrite = FALSE, parallel = TRUE)
