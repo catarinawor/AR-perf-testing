@@ -70,7 +70,7 @@ SDmarg = 0.6
 AR = c(0, 0.25, 0.5, 0.75, 0.9)
 
 # Set number of iterations (replicates)
-N = 100
+N = 101
 # Set number of bias iterations
 NB = 20
 
