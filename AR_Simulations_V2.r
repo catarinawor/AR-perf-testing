@@ -128,12 +128,20 @@ for(arindex in seq_along(AR)){
         # Scenarios will be renamed based on whether or not bias adjustment was run
         sppname <- paste0(letters[arindex], ifelse(bias == 0, "nb", "yb"))
         sppname.store[[counter]] <- sppname
-        run_ss3sim(iterations = 1:N, scenarios = my.scenarios, case_files = my.cases,
+        its <- ifelse(bias == 0, N, 1)
+        run_ss3sim(iterations = 1:its, scenarios = my.scenarios, case_files = my.cases,
         case_folder = case_folder, om_dir = om, em_dir = em,
         bias_adjust = ifelse(bias == 0, FALSE, TRUE), bias_nsim = NB,
         user_recdevs = Eps, user_recdevs_warn = FALSE, show.output.on.console = FALSE,
-        parallel = doparallel, parallel_iterations = doparallel,
-        sleep = 30)
+        parallel = doparallel, parallel_iterations = doparallel)
+        if (bias == 1) {
+          run_ss3sim(iterations = 2:N, scenarios = my.scenarios, case_files = my.cases,
+          case_folder = case_folder, om_dir = om, em_dir = em,
+          user_recdevs = Eps, user_recdevs_warn = FALSE, show.output.on.console = FALSE,
+          parallel = FALSE, parallel_iterations = FALSE,
+          bias_already_run = TRUE)
+        }
+
         # Move results
         # For each scenario move the results to the folder copies and change the name
         for(q in seq_along(my.scenarios)){
