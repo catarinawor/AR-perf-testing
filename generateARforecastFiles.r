@@ -63,7 +63,7 @@ writeLines(emctl, file.path(em, "codEM.ctl"))
 # Generate rec devs for cod
 SDmarg = 0.6
 # Set level of autocorrelation
-AR = c(0.25, 0.75)
+AR <- c(0, 0.25, 0.5, 0.75, 0.9)
 
 # Set number of iterations (replicates)
 N = 100
@@ -147,5 +147,4 @@ for(q in seq_along(my.scenarios)){
 # Read in the results, no need to specify scenarios if you want the results for everything
 # use overwrite_files = FALSE, if some results have already been read and you just want to update
 # with the newest scenarios that were ran.
-setwd("C:/Users/Elizabeth.Councill/Desktop/AR-perf-testing/Raw Output Files/AR 0/No bias adjustment")
-get_results_all(overwrite = FALSE)
+get_results_all("copies", overwrite = FALSE)
