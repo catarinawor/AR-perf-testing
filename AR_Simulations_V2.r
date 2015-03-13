@@ -146,7 +146,6 @@ for(arindex in seq_along(AR)){
         # Move results
         # For each scenario move the results to the folder copies and change the name
         for(q in seq_along(my.scenarios)){
-            file.copy(my.scenarios[q], wd.copy, recursive = TRUE)
             file.rename(my.scenarios[q],
                         file.path("copies", gsub("cod", sppname, my.scenarios[q])))
             unlink(my.scenarios[q], recursive = TRUE)
