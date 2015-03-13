@@ -40,7 +40,7 @@ library("r4ss")
 
 # To run in parallel
 library(doParallel)
-registerDoParallel(cores = 3)
+registerDoParallel(cores = 6)
 library(foreach)
 doparallel <- TRUE
 
@@ -70,7 +70,7 @@ SDmarg = 0.6
 AR = c(0, 0.25, 0.5, 0.75, 0.9)
 
 # Set number of iterations (replicates)
-N = 101
+N = 100
 # Set number of bias iterations
 NB = 20
 
@@ -141,7 +141,7 @@ for(arindex in seq_along(AR)){
         case_folder = case_folder, om_dir = om, em_dir = em,
         bias_adjust = ifelse(bias == 0, FALSE, TRUE), bias_nsim = NB,
         user_recdevs = Eps, user_recdevs_warn = FALSE, show.output.on.console = FALSE,
-        parallel = doparallel, parallel_iterations = doparallel)
+        parallel = doparallel)
 
         # Move results
         # For each scenario move the results to the folder copies and change the name
