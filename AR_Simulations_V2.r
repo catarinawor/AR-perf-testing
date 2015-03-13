@@ -47,7 +47,6 @@ doparallel <- TRUE
 # Set correct directories
 case_folder <- file.path(getwd(),"cases")
 dir.create(case_folder, recursive = TRUE, showWarnings = FALSE)
-file.copy(system.file("cases", package = "ss3models"), ".", recursive = TRUE)
 
 file.copy(system.file("models", "cod", "om", package = "ss3models"), ".", recursive = TRUE)
 file.copy(system.file("models", "cod", "em", package = "ss3models"), ".", recursive = TRUE)
