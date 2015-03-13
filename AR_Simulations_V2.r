@@ -124,9 +124,11 @@ for(arindex in seq_along(AR)){
             }
             Eps[, i] <- Eps_s
         }
-        #OPTIONAL: Check for bias correction (uncomment below two lines)
-        #bias_test<-rowMeans(exp(Eps))
-        #plot(bias_test)
+        # Check for bias correction
+        if (FALSE){
+            bias_test<-rowMeans(exp(Eps))
+            plot(bias_test)
+        }
     for(bias in 0:1){
         # If bias == 0, no bias adjustment is performed
         # If bias == 1, bias adjustment routines are done prior to the iterations
