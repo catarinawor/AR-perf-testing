@@ -105,9 +105,7 @@ my.cases <- list(D = c("agecomp", "lcomp", "index"), E = "E", F = "F")
 # To turn off cloning of input add argument "printstats = FALSE"
 # To:EC can you look at this for loop and see if the seed is still being set properly.
 # This gives the same seed for the each iteration of the different AR levels
-sppname.store <- list(); counter <- 0
 for(arindex in seq_along(AR)){
-    counter <- counter + 1
     SDcond = SDmarg *sqrt(1 - AR[arindex])
     # Set matrix of rec devs as "Eps"
     # Matrix must have one row for every year in the simulation
@@ -135,7 +133,6 @@ for(arindex in seq_along(AR)){
         # Run scenarios
         # Scenarios will be renamed based on whether or not bias adjustment was run
         sppname <- paste0(letters[arindex], ifelse(bias == 0, "nb", "yb"))
-        sppname.store[[counter]] <- sppname
         run_ss3sim(iterations = 1:N, scenarios = my.scenarios, case_files = my.cases,
         case_folder = case_folder, om_dir = om, em_dir = em,
         bias_adjust = ifelse(bias == 0, FALSE, TRUE), bias_nsim = NB,
