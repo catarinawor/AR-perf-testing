@@ -153,6 +153,6 @@ for(arindex in seq_along(AR)){
 # Read in the results, no need to specify scenarios if you want the results for everything
 # use overwrite_files = FALSE, if some results have already been read and you just want to update
 # with the newest scenarios that were ran.
-setwd("copies")
+setwd(wd.copy)
 get_results_all(overwrite = FALSE)
-
+setwd("..")
