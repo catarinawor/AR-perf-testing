@@ -79,6 +79,15 @@ my.forecasts <- c(0, 1, 3, 5, 10, 20)
 # change the age at 50% maturity from the true value
 my.biology <- c(0, -10.0)
 
+# Set the following line to TRUE if you want to run a short test
+# to make sure everything works.
+if (FALSE) {
+    AR <- tail(AR, 2)
+    my.forecasts <- head(my.forecasts, 2)
+    N <- 2
+    NB <- 2
+}
+
 # Write casefiles, this assumes your working directory is currently
 # where you opened this file.
 source("generateCaseFiles.R")
