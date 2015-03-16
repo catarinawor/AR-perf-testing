@@ -102,6 +102,22 @@ for(f in 1:length(my.forecasts)){
     close(file.current)
 }
 
+## Generate casefiles for different lengths of forecasting using E
+for(f in 1:length(my.forecasts)){
+    file.current <- file(paste0("E", f + 10, "-cod.txt"), open = "w")
+    writeLines(c(
+    "# description: Fixed M, no qSurvey, w a given forecast number",
+    "natM_type; 1Parm",
+    "natM_n_breakpoints; NULL",
+    "natM_lorenzen; NULL",
+    "natM_val; c(NA, -1)",
+    "par_name; SR_sigmaR",
+    "par_int; NA",
+    "par_phase; 5",
+    paste("forecast_num;", my.forecasts[f])), file.current)
+    close(file.current)
+}
+
 ## Generate casefiles for different levels of age at 50% maturity
 for(b in my.biology){
     counter <- which(my.biology == b) - 1
