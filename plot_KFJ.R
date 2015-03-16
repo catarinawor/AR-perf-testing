@@ -136,8 +136,11 @@ for(e in cases.E) {
 #### Plot relative error in parameters across autocorrelation
 ###############################################################################
 ###############################################################################
+# Change the number after E to change the number of forecast years
 cases.E <- "E1"
-whichpar <- "L_at_Amax_Fem_GP_1_re" #"SR_sigmaR_re"
+# Use this line to see what parameters you can plot
+grep("_re", names(scalars), value = TRUE)
+whichpar <- "CV_old_Fem_GP_1_re" #"SR_sigmaR_re"
 
 cases.spp <- unique(sapply(strsplit(unique(scalars$species), ""), "[", 1))
 ylim <- max(abs(range(scalars[, grep(whichpar, names(scalars))])))
