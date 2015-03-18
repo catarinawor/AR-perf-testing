@@ -86,21 +86,7 @@ case_comp(fleets = 1:2,
   years = list(all.fish, all.surv), cpar = 2:1,
   type = "lcomp", case = 30, spp = "cod")
 
-## Generate casefiles for different lengths of forecasting using E
-for(f in 1:length(my.forecasts)){
-    file.current <- file(paste0("E", f, "-cod.txt"), open = "w")
-    writeLines(c(
-    "# description: Fixed M, no qSurvey, w a given forecast number",
-    "natM_type; 1Parm",
-    "natM_n_breakpoints; NULL",
-    "natM_lorenzen; NULL",
-    "natM_val; c(NA, -1)",
-    "par_name; NULL",
-    "par_int; NA",
-    "par_phase; NULL",
-    paste("forecast_num;", my.forecasts[f])), file.current)
-    close(file.current)
-}
+
 
 ## Generate casefiles for different lengths of forecasting using E
 for(f in 1:length(my.forecasts)){
@@ -128,6 +114,21 @@ for(b in my.biology){
     "param; Mat50%_Fem",
     paste0("dev; rep(", b, ", 100)\n")), file.current)
     close(file.current)
+  ## Generate casefiles for different lengths of forecasting using E
+  for(f in 1:length(my.forecasts)){
+    file.current <- file(paste0("E", f + counter * 20, "-cod.txt"), open = "w")
+    writeLines(c(
+    "# description: Fixed M, no qSurvey, w a given forecast number",
+    "natM_type; 1Parm",
+    "natM_n_breakpoints; NULL",
+    "natM_lorenzen; NULL",
+    "natM_val; c(NA, -1)",
+    "par_name; Mat50%_Fem",
+    paste("par_int;", ctl[ctl$Label == "Mat50%_Fem", "INIT"] + b),
+    "par_phase; NA",
+    paste("forecast_num;", my.forecasts[f])), file.current)
+    close(file.current)
+  }
 }
 
 setwd(wd.entry)
