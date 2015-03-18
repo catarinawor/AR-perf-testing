@@ -76,7 +76,9 @@ NB = 20
 # Set number of forecast years
 my.forecasts <- c(0, 1, 3, 5, 10, 20)
 # change the age at 50% maturity from the true value
-my.biology <- c(0, -10.0)
+ctl <- SS_parlines("om/ss3.ctl")
+
+my.biology <- c(0, -ctl[ctl$Label == "Mat50%_Fem", "INIT"] * 0.50)
 
 # Set the following line to TRUE if you want to run a short test
 # to make sure everything works.
