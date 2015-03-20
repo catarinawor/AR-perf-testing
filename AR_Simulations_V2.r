@@ -85,9 +85,13 @@ NB = 20
 # Set number of forecast years
 my.forecasts <- c(0, 1, 3, 5, 10, 20)
 # change the age at 50% maturity from the true value
-ctl <- SS_parlines("om/ss3.ctl")
-
-my.biology <- c(0, -ctl[ctl$Label == "Mat50%_Fem", "INIT"] * 0.50)
+my.biology <- matrix(0, nrow = length(my.spp), ncol = 2)
+colnames(my.biology) <- c("orig", "half")
+rownames(my.biology) <- my.spp
+for (spp in seq_along(my.spp)) {
+  ctl <- SS_parlines(file.path(my.spp[spp], "om", "ss3.ctl"))
+  my.biology[spp, 2] <- -ctl[ctl$Label == "Mat50%_Fem", "INIT"] * 0.50
+}
 
 # Set the following line to TRUE if you want to run a short test
 # to make sure everything works.
@@ -144,8 +148,6 @@ for(arindex in seq_along(AR)){
         # If bias == 1, bias adjustment routines are done prior to the iterations
         # Run scenarios
         # Scenarios will be renamed based on whether or not bias adjustment was run
-        sppname <- paste0(letters[arindex], ifelse(bias == 0, "nb", "yb"))
-
         for (spp in my.spp){
           run_ss3sim(iterations = 1:N, scenarios = grep(spp, my.scenarios, value = TRUE),
             case_files = my.cases, case_folder = case_folder,
@@ -155,10 +157,10 @@ for(arindex in seq_along(AR)){
             parallel = doparallel)
           # Move results
           # For each scenario move the results to the folder copies and change the name
-          for (q in grep(spp, my.scenarios, value = TRUE)){
-            file.rename(my.scenarios[q], file.path("copies",
-              gsub(spp, sppname, grep(spp, my.scenarios, value = TRUE)[q])))
-          }
+          truename <- grep(spp, my.scenarios, value = TRUE)
+          sppname <- paste0(substr(spp, 1, 1), letters[arindex],
+                            ifelse(bias == 0, "n", "y"))
+          for (q in truename) file.rename(q, file.path("copies", gsub(spp, sppname, q)))
         }
     }
 }

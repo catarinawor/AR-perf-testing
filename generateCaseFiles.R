@@ -120,26 +120,29 @@ for(f in 1:length(my.forecasts)){
 }
 
 ## Generate casefiles for different levels of age at 50% maturity
-for(b in my.biology){
-    counter <- which(my.biology == b) - 1
-    file.current <- file(paste0("B", counter, "-cod.txt"), open = "w")
+for (spp in seq_along(my.spp)) {
+  for(b in 1:ncol(my.biology)) {
+    file.current <- file(paste0("B", b-1, "-", my.spp[spp], ".txt"), open = "w")
     writeLines(c(
     "# A case file to change the age at 50% maturity",
     "function_type; change_tv",
     "param; Mat50%_Fem",
-    paste0("dev; rep(", b, ", 100)\n")), file.current)
+    paste0("dev; rep(", my.biology[spp, b], ", 100)\n")), file.current)
     close(file.current)
-  ## Generate casefiles for different lengths of forecasting using E
+  }
+  # Do not need to change the em if using the original biology
+  if (b == 1) next
+  ctl <- SS_parlines(file.path("..", my.spp[spp], "om", "ss3.ctl"))
   for(f in 1:length(my.forecasts)){
-    file.current <- file(paste0("E", f + counter * 20, "-cod.txt"), open = "w")
+    file.current <- file(paste0("E", f + 20, "-", my.spp[spp], ".txt"), open = "w")
     writeLines(c(
-    "# description: Fixed M, no qSurvey, w a given forecast number",
+    "# description: Fixed M, no qSurvey, w a given forecast number, change mat",
     "natM_type; 1Parm",
     "natM_n_breakpoints; NULL",
     "natM_lorenzen; NULL",
     "natM_val; c(NA, -1)",
     "par_name; Mat50%_Fem",
-    paste("par_int;", ctl[ctl$Label == "Mat50%_Fem", "INIT"] + b),
+    paste("par_int;", ctl[ctl$Label == "Mat50%_Fem", "INIT"] + my.biology[spp, b]),
     "par_phase; NA",
     paste("forecast_num;", my.forecasts[f])), file.current)
     close(file.current)
