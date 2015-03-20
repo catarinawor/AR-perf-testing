@@ -26,6 +26,9 @@
 
 ###############################################
 
+# Variable inputs according to user
+my.spp <- c("cod", "flatfish")
+
 # If necessary install / or update ss3sim package
 devtools::install_github("ss3sim/ss3sim", "master") #beta
 devtools::install_github("ss3sim/ss3models", "master") #beta
@@ -46,8 +49,9 @@ doparallel <- TRUE
 case_folder <- file.path(getwd(),"cases")
 dir.create(case_folder, recursive = TRUE, showWarnings = FALSE)
 
-file.copy(system.file("models", "cod", "om", package = "ss3models"), ".", recursive = TRUE)
-file.copy(system.file("models", "cod", "em", package = "ss3models"), ".", recursive = TRUE)
+done <- file.copy(system.file("models", my.spp, package = "ss3models"), ".",
+  recursive = TRUE)
+
 om <- "om"
 em <- "em"
 wd.copy <- "copies"
@@ -55,11 +59,20 @@ dir.create(wd.copy, showWarnings = FALSE)
 
 #Fix the bias adjustment line in EM such that no bias adjustment is run
 # i.e., set it equal to 1, which uses pre-2009 SS methods
-emctl <- readLines(file.path(em, "ss3.ctl"))
-changeline <- grep("#_max_bias_adj_in_MPD", emctl)
-biasline <- strsplit(emctl[changeline], "#")[[1]][2]
-emctl[changeline] <- paste(-1, biasline, sep = " #")
-writeLines(emctl, file.path(em, "ss3.ctl"))
+# Change forecast file to use F in the last year
+for (spp in my.spp) {
+  emctl <- readLines(file.path(spp, "em", "ss3.ctl"))
+  emfor <- readLines(file.path(spp, "em", "forecast.ss"))
+  # Change ctl file
+  changeline <- grep("#_max_bias_adj_in_MPD", emctl)
+  biasline <- strsplit(emctl[changeline], "#")[[1]][2]
+  emctl[changeline] <- paste(-1, biasline, sep = " #")
+  # Change forecast file
+  changeline <- grep("#_MSY", emfor)
+  emfor[changeline] <- gsub("[0-9]+", 4, emfor[changeline])
+  writeLines(emctl, file.path(spp, "em", "ss3.ctl"))
+  writeLines(emfor, file.path(spp, "em", "forecast.ss"))
+}
 
 # Generate rec devs for cod
 SDmarg = 0.6
