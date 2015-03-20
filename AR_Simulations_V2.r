@@ -31,8 +31,6 @@ devtools::install_github("ss3sim/ss3sim", "master") #beta
 devtools::install_github("ss3sim/ss3models", "master") #beta
 devtools::install_github("r4ss/r4ss", "master") #beta
 
-#install.packages("ss3sim") #CRAN
-
 # Call necessary library packages
 library("ss3sim")
 library("ss3models")
