@@ -59,7 +59,7 @@ all.fish <- c(seq(start.fishery, start.fishery + 20, by = freq.fishery[1]),
               seq(start.fishery + 30, end, by = freq.fishery[2]))
 
 # Information regarding sample intensity
-high <- 100
+high <- 2000
 low <- 20
 
 # Get F from the package
