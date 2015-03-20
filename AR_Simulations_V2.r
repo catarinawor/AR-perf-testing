@@ -169,5 +169,5 @@ for(arindex in seq_along(AR)){
 # use overwrite_files = FALSE, if some results have already been read and you just want to update
 # with the newest scenarios that were ran.
 setwd(wd.copy)
-get_results_all(overwrite = FALSE)
+get_results_all(overwrite = FALSE, parallel = doparallel)
 setwd("..")
