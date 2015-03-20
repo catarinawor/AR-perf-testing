@@ -19,7 +19,7 @@
 #### Make sure dependent objects are available
 ###############################################################################
 ###############################################################################
-neededobjects <- c("case_folder", "my.forecasts", "my.biology")
+neededobjects <- c("case_folder", "my.forecasts", "my.biology", "my.spp")
 
 ignore <- sapply(neededobjects, function(x) {
     if (!exists(x)) {
@@ -63,36 +63,51 @@ high <- 100
 low <- 20
 
 # Get F from the package
-ffiles <- grep("F[0-9]+-cod",
-  list.files(system.file("cases", package = "ss3models"), full.names = TRUE),
-  value = TRUE)
+tofind <- paste0("F[0-9]+-", my.spp)
+ffiles <- sapply(tofind, grep, value = TRUE,
+  x = list.files(system.file("cases", package = "ss3models"), full.names = TRUE))
 done <- file.copy(ffiles, ".", recursive = TRUE, overwrite = TRUE)
 if (!any(done)) {
     stop(paste("Fishing case files were not properly copied."))
 }
 
 # Years of survey index of abundance
-writeLines(c("fleets; 2", paste0("years; ", deparse(list(all.surv))),
-  "sds_obs; list(0.2)"), "index30-cod.txt")
+done <- mapply(writeLines, con = paste0("index30-", my.spp, ".txt"),
+  MoreArgs = list(text = c("fleets; 2", paste0("years; ",
+  deparse(list(all.surv))), "sds_obs; list(0.2)")))
 
 # Age comp
 case_comp(fleets = 1:2,
   Nsamp = list(rep(high, length(all.fish)), rep(high, length(all.surv))),
   years = list(all.fish, all.surv), cpar = 2:1,
-  type = "agecomp", case = 30, spp = "cod")
+  type = "agecomp", case = 30, spp = my.spp)
 # Length comp
 case_comp(fleets = 1:2,
   Nsamp = list(rep(high, length(all.fish)), rep(high, length(all.surv))),
   years = list(all.fish, all.surv), cpar = 2:1,
-  type = "lcomp", case = 30, spp = "cod")
+  type = "lcomp", case = 30, spp = my.spp)
 
-
+## Generate casefiles for different lengths of forecasting using E
+for (f in 1:length(my.forecasts)){
+    file.current <- paste0("E", f, "-", my.spp, ".txt")
+    mapply(writeLines, con = file.current, MoreArgs = list(c(
+    "# description: Fixed M, no qSurvey, w a given forecast number",
+    "natM_type; 1Parm",
+    "natM_n_breakpoints; NULL",
+    "natM_lorenzen; NULL",
+    "natM_val; c(NA, -1)",
+    "par_name; NULL",
+    "par_int; NA",
+    "par_phase; NULL",
+    paste("forecast_num;", my.forecasts[f])))
+    )
+}
 
 ## Generate casefiles for different lengths of forecasting using E
 for(f in 1:length(my.forecasts)){
-    file.current <- file(paste0("E", f + 10, "-cod.txt"), open = "w")
-    writeLines(c(
-    "# description: Fixed M, no qSurvey, w a given forecast number",
+    file.current <- paste0("E", f + 10, "-", my.spp, ".txt")
+    mapply(writeLines, con = file.current, MoreArgs = list(c(
+    "# description: Fixed M, no qSurvey, w a given forecast number, est sigmaR",
     "natM_type; 1Parm",
     "natM_n_breakpoints; NULL",
     "natM_lorenzen; NULL",
@@ -100,8 +115,8 @@ for(f in 1:length(my.forecasts)){
     "par_name; SR_sigmaR",
     "par_int; NA",
     "par_phase; 5",
-    paste("forecast_num;", my.forecasts[f])), file.current)
-    close(file.current)
+    paste("forecast_num;", my.forecasts[f])))
+    )
 }
 
 ## Generate casefiles for different levels of age at 50% maturity

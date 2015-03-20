@@ -52,8 +52,6 @@ dir.create(case_folder, recursive = TRUE, showWarnings = FALSE)
 done <- file.copy(system.file("models", my.spp, package = "ss3models"), ".",
   recursive = TRUE)
 
-om <- "om"
-em <- "em"
 wd.copy <- "copies"
 dir.create(wd.copy, showWarnings = FALSE)
 
@@ -105,12 +103,11 @@ if (FALSE) {
 source("generateCaseFiles.R")
 
 # Set scenario names and classify which letters are used
-# using my.cases allows the removal of M from the scenario names, which is
-# used for time-varying natural mortality
+# B == maturity at 50%;
 # D == data; F = fishing; R = retrospective run; E = number of forecast years
-my.scenarios <- expand_scenarios(cases = list(D = 30, E = 1:length(my.forecasts),
-                                 F = 0), species = "cod")
-my.cases <- list(D = c("agecomp", "lcomp", "index"), E = "E", F = "F")
+my.scenarios <- expand_scenarios(cases = list(B = 0, D = 30,
+  E = 1:length(my.forecasts),  F = 0), species = my.spp)
+my.cases <- list(B = "B", D = c("agecomp", "lcomp", "index"), E = "E", F = "F")
 
 # Run ss3sim using prescribed rec devs
 #
@@ -148,17 +145,20 @@ for(arindex in seq_along(AR)){
         # Run scenarios
         # Scenarios will be renamed based on whether or not bias adjustment was run
         sppname <- paste0(letters[arindex], ifelse(bias == 0, "nb", "yb"))
-        run_ss3sim(iterations = 1:N, scenarios = my.scenarios, case_files = my.cases,
-        case_folder = case_folder, om_dir = om, em_dir = em,
-        bias_adjust = ifelse(bias == 0, FALSE, TRUE), bias_nsim = NB,
-        user_recdevs = Eps, user_recdevs_warn = FALSE, show.output.on.console = FALSE,
-        parallel = doparallel)
 
-        # Move results
-        # For each scenario move the results to the folder copies and change the name
-        for(q in seq_along(my.scenarios)){
-            file.rename(my.scenarios[q],
-              file.path("copies", gsub("cod", sppname, my.scenarios[q])))
+        for (spp in my.spp){
+          run_ss3sim(iterations = 1:N, scenarios = grep(spp, my.scenarios, value = TRUE),
+            case_files = my.cases, case_folder = case_folder,
+            om_dir = file.path(spp, "om"), em_dir = file.path(spp, "em"),
+            bias_adjust = ifelse(bias == 0, FALSE, TRUE), bias_nsim = NB,
+            user_recdevs = Eps, user_recdevs_warn = FALSE, show.output.on.console = FALSE,
+            parallel = doparallel)
+          # Move results
+          # For each scenario move the results to the folder copies and change the name
+          for (q in grep(spp, my.scenarios, value = TRUE)){
+            file.rename(my.scenarios[q], file.path("copies",
+              gsub(spp, sppname, grep(spp, my.scenarios, value = TRUE)[q])))
+          }
         }
     }
 }
