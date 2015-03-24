@@ -113,6 +113,14 @@ my.scenarios <- expand_scenarios(cases = list(B = 0, D = 30,
   E = 1:length(my.forecasts),  F = 0), species = my.spp)
 my.cases <- list(B = "B", D = c("agecomp", "lcomp", "index"), E = "E", F = "F")
 
+# Run ss3sim in a high data scenario
+run_ss3sim(iterations = 1:N, scenarios = "B0-D100-E1-F0-cod",
+  case_files = my.cases, case_folder = case_folder,
+  om_dir = file.path("cod", "om"), em_dir = file.path("cod", "em"),
+  bias_adjust = TRUE, bias_nsim = NB, show.output.on.console = FALSE,
+  parallel = doparallel)
+
+
 # Run ss3sim using prescribed rec devs
 #
 # NOTE: If you wish to run ss3sim more than once, you will need to rename or delete the previous run's output folders.

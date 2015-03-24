@@ -60,7 +60,7 @@ all.fish <- c(seq(start.fishery, start.fishery + 20, by = freq.fishery[1]),
 
 # Information regarding sample intensity
 high <- 2000
-low <- 20
+low <- 100
 
 # Get F from the package
 tofind <- paste0("F[0-9]+-", my.spp)
@@ -78,14 +78,30 @@ done <- mapply(writeLines, con = paste0("index30-", my.spp, ".txt"),
 
 # Age comp
 case_comp(fleets = 1:2,
-  Nsamp = list(rep(high, length(all.fish)), rep(high, length(all.surv))),
+  Nsamp = list(rep(low, length(all.fish)), rep(low, length(all.surv))),
   years = list(all.fish, all.surv), cpar = 2:1,
   type = "agecomp", case = 30, spp = my.spp)
 # Length comp
 case_comp(fleets = 1:2,
-  Nsamp = list(rep(high, length(all.fish)), rep(high, length(all.surv))),
+  Nsamp = list(rep(low, length(all.fish)), rep(low, length(all.surv))),
   years = list(all.fish, all.surv), cpar = 2:1,
   type = "lcomp", case = 30, spp = my.spp)
+
+
+# Lots of data cases 100
+done <- mapply(writeLines, con = paste0("index100-", my.spp, ".txt"),
+  MoreArgs = list(text = c("fleets; 2", paste0("years; ",
+  deparse(list(all.fish), width.cutoff = 100)), "sds_obs; list(0.1)")))
+
+case_comp(fleets = 1:2,
+  Nsamp = list(rep(high, length(all.fish)), rep(high, length(all.surv))),
+  years = list(all.fish, all.surv), cpar = 2:1,
+  type = "agecomp", case = 100, spp = my.spp)
+# Length comp
+case_comp(fleets = 1:2,
+  Nsamp = list(rep(high, length(all.fish)), rep(high, length(all.surv))),
+  years = list(all.fish, all.surv), cpar = 2:1,
+  type = "lcomp", case = 100, spp = my.spp)
 
 ## Generate casefiles for different lengths of forecasting using E
 for (f in 1:length(my.forecasts)){
