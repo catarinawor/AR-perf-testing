@@ -34,6 +34,7 @@ if (substring(Sys.info()["user"], 1, 1) == "k") {
 
 # Variable inputs according to user
 my.spp <- c("cod")
+my.dats <- c(50, 100, 0.1) # low, high, CV
 noest <- 100 # change max estimation phase in em
 
 # If necessary install / or update ss3sim package
@@ -104,6 +105,7 @@ NB = 5
 
 # Set number of forecast years
 my.forecasts <- c(20)
+
 # change the age at 50% maturity from the true value
 my.biology <- matrix(0, nrow = length(my.spp), ncol = 2)
 colnames(my.biology) <- c("orig", "half")
