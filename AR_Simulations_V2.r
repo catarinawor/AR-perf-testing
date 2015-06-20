@@ -1,11 +1,10 @@
-################################################
-#
+#################################################
 # Performance testing SS3 with autocorrelated recruitment data.
 #
 # Authors (order subject to change): Councill, E., J. Thorson, L. Brooks, K. Johnson, R. Methot
 #
 # Date written: November 2, 2014
-# Date last modified: January 22, 2015
+# Date last modified: June 20, 2015
 # Last modifying author: KFJ
 #
 ###############################################
