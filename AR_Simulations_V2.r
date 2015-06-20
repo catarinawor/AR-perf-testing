@@ -26,7 +26,7 @@
 ###############################################
 
 # Variable inputs according to user
-my.spp <- c("cod", "flatfish")
+my.spp <- c("cod")
 
 # If necessary install / or update ss3sim package
 devtools::install_github("ss3sim/ss3sim", "master") #beta
