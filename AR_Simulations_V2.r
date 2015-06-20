@@ -170,7 +170,9 @@ for(arindex in seq_along(AR)){
             Eps_k = rnorm(NROW(Eps), mean = -SDcond^2/2, sd = SDcond)
             for (t in 2:NROW(Eps)) {
                 Eps_s[1] <-Eps_k[1]
-                Eps_s[t] <- Eps_s[t-1] * AR[arindex] + sqrt(1-AR^2)*Eps_k[t]
+                # KFJ
+                # fix a bug in the code, by adding [arindex] to the second AR call
+                Eps_s[t] <- Eps_s[t-1] * AR[arindex] + sqrt(1-AR[arindex]^2)*Eps_k[t]
             }
             Eps[, i] <- Eps_s
         }
