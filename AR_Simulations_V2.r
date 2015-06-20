@@ -25,6 +25,13 @@
 
 ###############################################
 
+# Setworking directory
+if (substring(Sys.info()["user"], 1, 1) == "k") {
+  setwd("t:/AR-perf-testing")
+} else {
+  setwd("C:/Users/Elizabeth.Councill/Desktop/AR-perf-testing/AR-perf-testing/new/")
+}
+
 # Variable inputs according to user
 my.spp <- c("cod")
 
