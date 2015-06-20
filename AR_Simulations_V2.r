@@ -103,7 +103,7 @@ N = 50
 NB = 5
 
 # Set number of forecast years
-my.forecasts <- c(0, 1, 3, 5, 10, 20)
+my.forecasts <- c(20)
 # change the age at 50% maturity from the true value
 my.biology <- matrix(0, nrow = length(my.spp), ncol = 2)
 colnames(my.biology) <- c("orig", "half")
