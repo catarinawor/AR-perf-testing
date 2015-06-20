@@ -49,7 +49,7 @@ library("r4ss")
 
 # To run in parallel
 library(doParallel)
-registerDoParallel(cores = 6)
+registerDoParallel(cores = 3)
 library(foreach)
 doparallel <- TRUE
 
@@ -72,6 +72,7 @@ dir.create(wd.copy, showWarnings = FALSE)
 for (spp in my.spp) {
   emctl <- readLines(file.path(spp, "em", "ss3.ctl"))
   emfor <- readLines(file.path(spp, "em", "forecast.ss"))
+  emsta <- readLines(file.path(spp, "em", "starter.ss"))
   # Change ctl file
   changeline <- grep("#_max_bias_adj_in_MPD", emctl)
   biasline <- strsplit(emctl[changeline], "#")[[1]][2]
