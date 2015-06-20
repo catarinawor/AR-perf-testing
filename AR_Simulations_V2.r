@@ -189,7 +189,7 @@ for(arindex in seq_along(AR)){
             om_dir = file.path(spp, "om"), em_dir = file.path(spp, "em"),
             bias_adjust = ifelse(bias == 0, FALSE, TRUE), bias_nsim = NB,
             user_recdevs = Eps, user_recdevs_warn = FALSE, show.output.on.console = FALSE,
-            parallel = doparallel)
+            parallel = doparallel, hess_always = TRUE)
           # Move results
           # For each scenario move the results to the folder copies and change the name
           truename <- grep(spp, my.scenarios, value = TRUE)
