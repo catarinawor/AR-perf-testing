@@ -98,9 +98,9 @@ SDmarg = 0.6
 AR = c(-0.3, 0, 0.25, 0.5, 0.75, 0.9)
 
 # Set number of iterations (replicates)
-N = 100
+N = 50
 # Set number of bias iterations
-NB = 20
+NB = 5
 
 # Set number of forecast years
 my.forecasts <- c(0, 1, 3, 5, 10, 20)
