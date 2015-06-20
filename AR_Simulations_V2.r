@@ -137,16 +137,17 @@ my.cases <- list(B = "B", D = "index", A = "agecomp", L = "lcomp", E = "E", F = 
 
 # Run ss3sim in a high data scenario
 # Code runs a scenario with 100 iterations and compiles a report.
-setwd("validate")
-run_ss3sim(iterations = 1:N, scenarios = "B0-D100-E1-F0-cod",
-  case_files = my.cases, case_folder = case_folder,
-  om_dir = file.path("cod", "om"), em_dir = file.path("cod", "em"),
-  bias_adjust = TRUE, bias_nsim = NB, show.output.on.console = FALSE,
-  parallel = doparallel)
-get_results_all()
-knit2pdf("plot_validate.Rnw")
-setwd("..")
-
+if (FALSE) {
+  setwd("validate")
+  run_ss3sim(iterations = 1:N, scenarios = "A36-B0-D30-E1-F0-L36-cod",
+    case_files = my.cases, case_folder = case_folder,
+    om_dir = file.path("cod", "om"), em_dir = file.path("cod", "em"),
+    bias_adjust = TRUE, bias_nsim = NB, show.output.on.console = FALSE,
+    parallel = doparallel)
+  get_results_all()
+  knit2pdf("plot_validate.Rnw")
+  setwd("..")
+}
 # Run ss3sim using prescribed rec devs
 #
 # NOTE: If you wish to run ss3sim more than once, you will need to rename or delete the previous run's output folders.
