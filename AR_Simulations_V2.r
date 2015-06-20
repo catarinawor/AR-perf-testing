@@ -34,6 +34,7 @@ if (substring(Sys.info()["user"], 1, 1) == "k") {
 
 # Variable inputs according to user
 my.spp <- c("cod")
+noest <- 100 # change max estimation phase in em
 
 # If necessary install / or update ss3sim package
 devtools::install_github("ss3sim/ss3sim", "master") #beta
@@ -74,11 +75,21 @@ for (spp in my.spp) {
   changeline <- grep("#_max_bias_adj_in_MPD", emctl)
   biasline <- strsplit(emctl[changeline], "#")[[1]][2]
   emctl[changeline] <- paste(-1, biasline, sep = " #")
+  # Turn on autocorrelation
+  changeline <- grep("SR_autocorr", emctl)
+  autoline <- "-1 1 0 0 -1 0 5 #SR_autocorr"
+  emctl[changeline] <- autoline
   # Change forecast file
   changeline <- grep("#_MSY", emfor)
   emfor[changeline] <- gsub("[0-9]+", 4, emfor[changeline])
+  if (noest != 100) {
+    Changeline <- grep("# Turn off estimation for parameters entering after this phase", emsta)
+    phaseline <- strsplit(emsta[changeline], "#")[[1]][2]
+    emsta[changeline] <- paste(noest, phaseline, sep = "#")
+  }
   writeLines(emctl, file.path(spp, "em", "ss3.ctl"))
   writeLines(emfor, file.path(spp, "em", "forecast.ss"))
+  writeLines(emsta, file.path(spp, "em", "starter.ss"))
 }
 
 # Generate rec devs for cod
