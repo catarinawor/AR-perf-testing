@@ -132,8 +132,8 @@ source("generateCaseFiles.R")
 # B == maturity at 50%;
 # D == data; F = fishing; R = retrospective run; E = number of forecast years
 my.scenarios <- expand_scenarios(cases = list(B = 0, D = 30,
-  E = 1:length(my.forecasts),  F = 0), species = my.spp)
-my.cases <- list(B = "B", D = c("agecomp", "lcomp", "index"), E = "E", F = "F")
+  E = 106,  A = 36, L = 36, F = 0), species = my.spp)
+my.cases <- list(B = "B", D = "index", A = "agecomp", L = "lcomp", E = "E", F = "F")
 
 # Run ss3sim in a high data scenario
 # Code runs a scenario with 100 iterations and compiles a report.
