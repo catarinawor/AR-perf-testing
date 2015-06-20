@@ -95,7 +95,7 @@ for (spp in my.spp) {
 # Generate rec devs for cod
 SDmarg = 0.6
 # Set level of autocorrelation
-AR = c(0, 0.25, 0.5, 0.75, 0.9)
+AR = c(-0.3, 0, 0.25, 0.5, 0.75, 0.9)
 
 # Set number of iterations (replicates)
 N = 100
