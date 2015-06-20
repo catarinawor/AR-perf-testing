@@ -2,13 +2,10 @@
 \usepackage[T1]{fontenc}
 
 \begin{document}
-A single scenario with 100 iterations was ran for cod, where
-there are 2000 age- and length-compositions per sampling year
+Scenarios (\Sexpr{ss3sim::id_scenarios(getwd())}) with
+\Sexpr{max(dir(ss3sim::id_scenarios(getwd())[1], pattern = "[0-9]$"))} iterations,
+where there are age- and length-compositions per sampling year
 for both the fishery and the survey.
-The coefficient of variation for the survey index of abundance
-was decreased from 0.2 to 0.1 and the number of years was increased.
-Note that the survey is still not available every year, nor is
-composition data.
 
 <<setup, include=FALSE>>=
 options(xtable.comment = FALSE)
@@ -27,54 +24,95 @@ ts$F_re <- with(ts, ((F_om - F_em) / F_om))
 @
 
 <<echo = FALSE, fig.height = 8>>=
-par(mfrow = c(3, 1), mar = c(0, 5, 0, 1), oma = c(4, 1, 2, 2),
-  tck = -0.001, mgp = c(2.75, 0.15, 0))
+numscen <- length(unique(ts$scenario))
+scenarios <- as.character(unique(ts$scenario))
+for (scen in 1:numscen) {
+par(mfrow = c(3, 1), mar = c(0, 5, 0, 1), oma = c(7, 1, 2, 2),
+  tck = -0.001, mgp = c(2.75, 0.15, 0), las = 1)
 for (par in c("SSB_re", "R0_re", "F_re")) {
-x <- aggregate(eval(parse(text = par)) ~ year, data = ts, mean)
-plot(x, ylim = c(-max(abs(x[, 2])), max(abs(x[, 2]))), las = 1,
-  ylab = par, xaxt = "n")
+ # Time series boxplot
+x <- aggregate(eval(parse(text = par)) ~ year,
+  data = ts[ts$scenario == scenarios[scen], ], mean)
+boxplot(eval(parse(text = par)) ~ year,
+    data = ts[ts$scenario == scenarios[scen], ], ylab = par,
+  ylim = c(-1, 1), xaxt = "n")
+getdatanum <- ss3sim:::get_caseval(scenarios[scen], case = "D")
+getlnthnum <- ss3sim:::get_caseval(scenarios[scen], case = "L")
 abline(h = 0, lty = 2, col = "red")
   if (par == "SSB_re") {
     legend("topright", legend = "legend reveals years with data", bty = "n")
-    x <- ss3sim:::get_args(file.path("..", "cases", "index100-cod.txt"))$years[[1]]
-    points(x, rep(par("yaxp")[2] * 1.15, length(x)))
-    text(-4, rep(par("yaxp")[2]) * 1.15, "survey (CV=0.1)", pos = 4)
+    legend("bottomright",
+      legend = c("Lognormal", "Multinomial", "Dirichlet"), pch = c(3, 19, 24),
+      bty = "n")
+    x.mast <- ss3sim:::get_args(file.path("..", "cases",
+      paste0("index", getdatanum,"-cod.txt")))
+    l.mast <- ss3sim:::get_args(file.path("..", "cases",
+      paste0("lcomp", getlnthnum, "-cod.txt")))
 
-    x <- ss3sim:::get_args(file.path("..", "cases", "lcomp100-cod.txt"))$years[[2]]
-    points(x, rep(par("yaxp")[2], length(x)))
-    text(-4, rep(par("yaxp")[2]), "survey comp (n=2000)", pos = 4)
+    height <- 0.8
+    y <- par("yaxp")[2]
+    x <- x.mast$years[[1]]
+    points(x, rep(y * height, length(x)), pch = 3)
+    text(-4, par("yaxp")[2] * height,
+      paste0("survey (CV=", x.mast$sds_obs[[1]], ")"), pos = 4)
 
-    x <- ss3sim:::get_args(file.path("..", "cases", "lcomp100-cod.txt"))$years[[1]]
-    points(x, rep(par("yaxp")[2] * 0.85, length(x)))
-    text(-4, rep(par("yaxp")[2]) * 0.85, "fish comp (n=2000)", pos = 4)
+    for (comps in seq_along(l.mast$fleets)){
+    height <- height - 0.15
+    type <- ifelse(l.mast$cpar[[comps]] == 1, "fish", "surv")
+      x <- l.mast$years[[comps]]
+      points(x, rep(y * height, length(x)),
+        pch = ifelse(l.mast$cpar[comps] == 1, 19, 24))
+      text(-4, par("yaxp")[2] * height,
+        paste0(type, " comp (n=", l.mast$Nsamp[[comps]][1], ")"), pos = 4)
+    }
   }
 }
+  par(new = TRUE)
+  plot(1:100, rep(1, 100), ylab = "", xlab = "", yaxt = "n", type = "n")
   axis(1)
   mtext(side = 1, outer = TRUE, "years", line = 2)
-  legend("bottomright", legend = "*note scales are different but symmetrical",
+  legend("bottomright", legend = "*scales (-1:1) are symmetrical.",
     bty = "n")
-  mtext(side = 3, outer = TRUE,
-    "Relative error of cod with large samples sizes and bias adjustment")
-@
-
-<<echo = FALSE>>=
-temp <- list()
-counter <- 1
-mynames <- grep("_re", names(scalars), value = TRUE)[c(3,4,7:11,22,32,34,38,40)]
-for(ind in mynames) {
-  if (!all(is.numeric(eval(parse(text = paste0("scalars[,\"", ind, "\"]")))))) next
-  temp[[counter]] <- aggregate(eval(parse(text = ind)) ~ species, data = scalars, mean, na.rm = FALSE)
-  counter <- counter + 1
+  mtext(side = 1, outer = TRUE, line = 4,
+    paste0("Figure", scen, ". Relative error for ", scenarios[scen],
+      ifelse(length(dir(scenarios[scen], pattern = "bias")) == 0, " without", " with"),
+      " bias adjustment."))
 }
-temp <- do.call("rbind", sapply(temp, "[", 2))
-rownames(temp) <- mynames
 @
 
 <<echo = FALSE, results = 'asis'>>=
+for (scen in 1:numscen){
+temp <- list()
+counter <- 1
+store <- vector()
+mynames <- grep("_re", names(scalars), value = FALSE)
+for(ind in mynames) {
+  if (!all(is.numeric(scalars[scalars$scenario == scenarios[scen], ind]))) next
+  if (all(is.na(scalars[scalars$scenario == scenarios[scen], ind]))) next
+  if (all(scalars[scalars$scenario == scenarios[scen], ind] == 0)) next
+  temp[[counter]] <- aggregate(as.matrix(scalars[scalars$scenario == scenarios[scen], ind]) ~ species,
+    data = scalars[scalars$scenario == scenarios[scen], ],
+    mean, na.rm = TRUE)
+  if (grepl("LnQ", colnames(scalars)[ind])) {
+    temp[[counter]] <- aggregate((
+      exp(scalars[scalars$scenario == scenarios[scen], "LnQ_base_2_Survey_om"]) -
+      exp(scalars[scalars$scenario == scenarios[scen], "LnQ_base_2_Survey_em"])) /
+      exp(scalars[scalars$scenario == scenarios[scen], "LnQ_base_2_Survey_om"]) ~
+      species,
+      data = scalars[scalars$scenario == scenarios[scen], ], mean,
+      na.rm = TRUE)
+  }
+  counter <- counter + 1
+  store <- append(store, ind, length(store) + 1)
+}
+temp <- do.call("rbind", sapply(temp, "[", 2))
+rownames(temp) <- colnames(scalars)[store]
 print(xtable(temp, digits = 5,
-  caption = "Relative error in estimated parameters."), include.rownames = TRUE,
+  caption = paste0("Relative error in estimated and derived parameters, for",
+    scenarios[scen], ". Note q is exp(ln(q)).")), include.rownames = TRUE,
   include.colnames = FALSE,
   )
+}
 @
 
 \end{document}
