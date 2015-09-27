@@ -50,6 +50,9 @@ if (Sys.getenv("USERNAME") == "Elizabeth.Councill") {
 }
 if (Sys.getenv("USERNAME") == "kelli") {
   dir.main <- "C:/AR-perf-testing"
+  if(!exists(dir.main)) {
+    dir.main <- "T:/AR-perf-testing"
+  }
 }
 if (Sys.getenv("USERNAME") == "kfjohns") {
   dir.main <- "T:/AR-perf-testing"
