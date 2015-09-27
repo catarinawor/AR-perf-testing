@@ -23,7 +23,7 @@ devtools::install_github("r4ss/r4ss@master")
  library(knitr) # To compile output
 
 # Variable inputs
- doparallel <- FALSE
+ doparallel <- TRUE
  SDmarg <- 0.6 # rec devs
  AR = c(-0.25, 0, 0.25, 0.5, 0.75, 0.9) # levels of autocorrelation
  N = 3 # number of replicates
@@ -68,7 +68,9 @@ if (Sys.getenv("USERNAME") == "kfjohns") {
 
 # Set up parallel running
 if (doparallel) {
-  numcores <- Sys.getenv("NUMBER_OF_PROCESSORS") - 1
+  numcores <- Sys.getenv("NUMBER_OF_PROCESSORS")
+  mode(numcores) <- "numeric"
+  numcores <- numcores - 1
   registerDoParallel(cores = numcores)
 }
 
