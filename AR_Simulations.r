@@ -183,16 +183,19 @@ ncols <- 300 # number of columns for Report.sso file
         bias_nsim = bias,
         bias_adjust = ifelse(bias == 0, FALSE, TRUE),
         om_dir = file.path(spp, "om"), em_dir = file.path(spp, "em"),
-        hess_always = TRUE, parallel = doparallel,
+        hess_always = TRUE,
+        # parallel = doparallel, parallel_iterations = doparallel,
         case_files = my.cases, case_folder = case_folder,
         user_recdevs_warn = verbose, show.output.on.console = verbose,
       )
    truename <- grep(spp, my.scenarios, value = TRUE)
    sppname <- paste0(substr(spp, 1, 1), letters[ar], ifelse(bias == 0, "n", "y"))
    for (scen in truename) {
+
      # Copy to a new species name for the level of autocorrelation
      newscenname <- gsub(spp, sppname, scen)
      file.rename(scen, newscenname)
+
      # Copy and set AR to zero
      thisname <- gsub(spp, paste0(sppname, "z"), scen)
      system(paste("xcopy", newscenname, thisname, "/E /S /H /I"),
@@ -207,6 +210,22 @@ ncols <- 300 # number of columns for Report.sso file
        ignore <- system(get_bin(), show.output.on.console = verbose)
        setwd(currentwd)
      } # End loop over iterations for AR == 0 in EM
+
+     # Copy and set AR to true AR
+     thisname <- gsub(spp, paste0(sppname, "t"), scen)
+     system(paste("xcopy", newscenname, thisname, "/E /S /H /I"),
+       show.output.on.console = verbose)
+     currentwd <- getwd()
+     for (it in 1:N) {
+       setwd(file.path(thisname, it, "em"))
+       emctl <- readLines("em.ctl")
+       changeline <- grep("# SR_autocorr", emctl)
+       emctl[changeline] <- paste("-1 1", AR[ar], "0 -1 0 -5 # SR_autocorr")
+       writeLines(emctl, "em.ctl")
+       ignore <- system(get_bin(), show.output.on.console = verbose)
+       setwd(currentwd)
+     } # End loop over iterations for AR == 0 in EM
+
      # Copy and set AR to zero
      thisname <- gsub(spp, paste0(sppname, "x"), scen)
      system(paste("xcopy", newscenname, thisname, "/E /S /H /I"),
@@ -247,6 +266,7 @@ ncols <- 300 # number of columns for Report.sso file
        ignore <- system(get_bin(), show.output.on.console = verbose)
      setwd("../..")
    } # End loop over iterations for AR == external estimate
+
    setwd(currentwd)
    } # End loop over each scenario
    } # End bias adjustment number loop
