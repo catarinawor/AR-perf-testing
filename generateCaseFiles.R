@@ -117,7 +117,7 @@ for (f in 1:length(my.forecasts)){
     "par_name; NULL",
     "par_int; NA",
     "par_phase; NULL",
-    paste("forecast_num;", my.forecasts[2])))
+    paste("forecast_num;", my.forecasts)))
     )
 }
 
