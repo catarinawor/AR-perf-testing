@@ -72,7 +72,7 @@ if (!any(done)) {
     stop(paste("Fishing case files were not properly copied."))
 }
 for (spp in my.spp) {
-  fmsy <- get_args(paste0("F0-", spp, ".txt"))$fvals
+  fmsy <- ss3sim:::get_args(paste0("F0-", spp, ".txt"))$fvals
   fmsy <- unique(fmsy[fmsy != 0])
   writeF(fvals =
     c(rep(0, burnin), rep(fmsy, years.fish), rep(0, my.forecasts)),
