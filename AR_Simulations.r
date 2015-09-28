@@ -184,9 +184,9 @@ ncols <- 300 # number of columns for Report.sso file
         bias_adjust = ifelse(bias == 0, FALSE, TRUE),
         om_dir = file.path(spp, "om"), em_dir = file.path(spp, "em"),
         hess_always = TRUE,
-        # parallel = doparallel, parallel_iterations = doparallel,
+        parallel = doparallel, parallel_iterations = doparallel,
         case_files = my.cases, case_folder = case_folder,
-        user_recdevs_warn = verbose, show.output.on.console = verbose,
+        user_recdevs_warn = verbose, show.output.on.console = verbose
       )
    truename <- grep(spp, my.scenarios, value = TRUE)
    sppname <- paste0(substr(spp, 1, 1), letters[ar], ifelse(bias == 0, "n", "y"))
