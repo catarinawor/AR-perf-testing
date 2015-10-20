@@ -25,7 +25,6 @@ devtools::install_github("r4ss/r4ss@master")
 # Variable inputs
  doparallel <- TRUE
  runsim <- TRUE
- SDmarg <- 0.6 # rec devs
  AR = c(-0.25, 0, 0.25, 0.5, 0.75, 0.9) # levels of autocorrelation
  N = 100 # number of replicates
  NB = 5 # number of bias adjustment runs
@@ -140,11 +139,7 @@ ncols <- 300 # number of columns for Report.sso file
  for (spp in my.spp) {
    # Create recruitment deviations
    # A list is generated with one matrix per level of AR
-   SDmarg <- readLines(file.path(spp, "om", "ss3.ctl"))
-   SDmarg <- grep("SR_sigmaR", SDmarg, value = TRUE)
-   SDmarg <- strsplit(SDmarg, " ")[[1]]
-   SDmarg <- SDmarg[!SDmarg == ""][3]
-   mode(SDmarg) <- "numeric"
+   SDmarg <- get_sigmar(file.path(spp, "om", "ss3"))
    SDcond = SDmarg * sqrt(1 - AR^2)     # BUG #1
    EpsList <- list()
    for (ar in seq_along(AR)) {
