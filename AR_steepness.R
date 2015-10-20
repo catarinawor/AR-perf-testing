@@ -12,27 +12,25 @@ if (spp != "cod") {
 newspp <- "ste"
 arvalue <- tail(AR, 1)
 dir.create(newspp)
-ignore <- system(paste("xcopy", my.spp, newspp, "/E /S /H /I"))
+if (file.exists(newspp)) unlink(newspp, recursive = TRUE)
+ignore <- system(paste("xcopy", my.spp, newspp, "/E /S /H /I"),
+  show.output.on.console = FALSE)
 
 #' Change steepness in the OM to 1.0
 r4ss::SS_changepars(dir = file.path(newspp, "om"),
   ctlfile = list.files(file.path(newspp, "om"), pattern = "\\.ctl"),
   newctlfile = list.files(file.path(newspp, "om"), pattern = "\\.ctl"),
   strings = "SR_BH_steep", newvals = 1.0, estimate = NULL)
-#' Change steepness in the EM to 1.0
+#' Change steepness in the EM to 1.0 & AR to the true value
 r4ss::SS_changepars(dir = file.path(newspp, "em"),
   ctlfile = list.files(file.path(newspp, "em"), pattern = "\\.ctl"),
   newctlfile = list.files(file.path(newspp, "em"), pattern = "\\.ctl"),
-  strings = "SR_BH_steep", newvals = 1.0, estimate = NULL)
-#' Change AR to the true value in the EM to 1.0
-r4ss::SS_changepars(dir = file.path(newspp, "em"),
-  ctlfile = list.files(file.path(newspp, "em"), pattern = "\\.ctl"),
-  newctlfile = list.files(file.path(newspp, "em"), pattern = "\\.ctl"),
-  strings = "SR_autocorr", newvals = arvalue, estimate = FALSE)
+  strings = c("SR_BH_steep", "SR_autocorr"), newvals = c(1.0, arvalue), estimate = FALSE)
 
 #' Copy all case files
 copyfiles <- list.files(case_folder, full.names = TRUE)
-ignore <- file.copy(copyfiles, gsub(my.spp, newspp, copyfiles))
+copyfiles <- copyfiles[!grepl(newspp, copyfiles)]
+ignore <- file.copy(copyfiles, gsub(my.spp, newspp, copyfiles), overwrite = TRUE)
 
 #' Calculate the new Fmsy and write a case file
 dir.create(file.path(newspp, "fmsy"))
