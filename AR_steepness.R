@@ -28,14 +28,15 @@ ignore <- file.copy(copyfiles, gsub(my.spp, newspp, copyfiles))
 #' Calculate the new Fmsy and write a case file
 dir.create(file.path(newspp, "fmsy"))
 fmsy <- profile_fmsy(om_in = file.path(getwd(), newspp, "om"),
-  file.path(newspp, "fmsy"), end = 0.75)
-fs <- ss3sim:::get_args(file.path(case_folder, paste0("F1-", my.spp, ".txt")))$fvals
+  file.path(newspp, "fmsy"), start = 0.05, end = 0.3)
+fs <- ss3sim:::get_args(
+  file.path(case_folder, paste0("F1-", my.spp[1], ".txt")))$fvals
 fs[which(fs != 0)] <- fmsy[which.max(fmsy$eqCatch), "fValues"]
 
 sink(file.path(case_folder, paste0("F1-", newspp, ".txt")))
 writeLines("# Casefile for steepness == 1.0 of cod")
-cat("years; c(", paste(0:length(fs), collapse = ", "), ")\n",
-  "years_alter; c(", paste(0:length(fs), collapse = ", "), ")\n",
+cat("years; c(", paste(1:length(fs), collapse = ", "), ")\n",
+  "years_alter; c(", paste(1:length(fs), collapse = ", "), ")\n",
   "fvals; c(", paste(fs, collapse = ", "), ")\n", sep = "")
 sink()
 
@@ -47,7 +48,7 @@ sink()
     user_recdevs = EpsList[[length(AR)]],
     bias_nsim = NB,
     bias_adjust = TRUE,
-    om_dir = file.path(spp, "om"), em_dir = file.path(spp, "em"),
+    om_dir = file.path(newspp, "om"), em_dir = file.path(newspp, "em"),
     hess_always = TRUE, parallel = doparallel, parallel_iterations = doparallel,
     case_files = my.cases, case_folder = case_folder,
     user_recdevs_warn = verbose, show.output.on.console = verbose
