@@ -26,8 +26,8 @@ devtools::install_github("r4ss/r4ss@master")
  doparallel <- TRUE
  SDmarg <- 0.6 # rec devs
  AR = c(-0.25, 0, 0.25, 0.5, 0.75, 0.9) # levels of autocorrelation
- N = 3 # number of replicates
- NB = 1 # number of bias adjustment runs
+ N = 100 # number of replicates
+ NB = 5 # number of bias adjustment runs
  nyears <- 100 # length of simulation
  burnin <- 25 # length of burnin period
  my.dats <- c(100, 2000, 0.1) # amount of data (low, high, CV)
@@ -39,6 +39,7 @@ devtools::install_github("r4ss/r4ss@master")
  width <- 600
  height <- 600
  unit <- "px"
+ types <- c("z", "t", "x") # EM types, see "em"
 
 if (length(my.spp) > 1| length(my.forecasts) > 1) {
   stop("some code needs to be re-written to accommodate more species or forecasts")
@@ -57,6 +58,10 @@ if (Sys.getenv("USERNAME") == "kelli") {
 if (Sys.getenv("USERNAME") == "kfjohns") {
   dir.main <- "T:/AR-perf-testing"
 }
+if (Sys.getenv("USERNAME") == "James.Thorson") {
+  Date = Sys.Date()
+  dir.main <- paste0("C:/Users/James.Thorson/Desktop/UW Hideaway/Collaborations/2015 -- Councill AR recruitment/Runs_",Date,"/")
+}
  setwd(dir.main)
  case_folder <- file.path(dir.main, "cases")
  fig_folder <- file.path(dir.main, "figures")
@@ -71,7 +76,8 @@ if (doparallel) {
   numcores <- Sys.getenv("NUMBER_OF_PROCESSORS")
   mode(numcores) <- "numeric"
   numcores <- numcores - 1
-  registerDoParallel(cores = numcores)
+  cl <- makeCluster(numcores)
+  registerDoParallel(cl)
 }
 
 # OM and EM files for this simulation
@@ -92,6 +98,8 @@ if (doparallel) {
    # Change forecast file
    changeline <- grep("#_MSY", emfor)
    emfor[changeline] <- gsub("[0-9]+", 4, emfor[changeline])
+   changeline <- grep("#_FirstYear_for_caps_and_allocations", emfor)
+   emfor[changeline] <- gsub("[0-9]+", nyears + 1, emfor[changeline])
    changeline <- grep("#_Forecast", emfor)
    emfor[changeline] <- gsub("[0-9]+", 2, emfor[changeline])
    changeline <- grep("#_First_forecast_loop_with_stochastic_recruitment", emfor)
@@ -114,11 +122,13 @@ if (doparallel) {
 
 # Write casefiles, this assumes your working directory is currently
 source("generateCaseFiles.R")
+# Source the code for running EM; code is a function
+source("em.R")
 
 # Set scenario names and classify which letters are used
 # D == data; F = fishing; E = number of forecast years
 my.scenarios <- expand_scenarios(cases = list(D = 0, E = my.forecasts,
-  A = my.dats[1:2], L = my.dats[1:2], F = 1), species = my.spp)
+  A = my.dats[1], L = my.dats[1], F = 1), species = my.spp)
 my.cases <- list(D = "index", A = "agecomp", L = "lcomp", E = "E", F = "F")
 lag <- 1 # Lag used for external estimate of autocorrelated rec devs
 timeframe <- c(burnin + 1, nyears - my.forecasts) # Time frame to use for external estimate
@@ -134,7 +144,7 @@ ncols <- 300 # number of columns for Report.sso file
    SDmarg <- strsplit(SDmarg, " ")[[1]]
    SDmarg <- SDmarg[!SDmarg == ""][3]
    mode(SDmarg) <- "numeric"
-   SDcond = SDmarg * sqrt(1 - AR)
+   SDcond = SDmarg * sqrt(1 - AR^2)     # BUG #1
    EpsList <- list()
    for (ar in seq_along(AR)) {
      EpsList[[ar]] <- matrix(0, nrow = nyears, ncol = N + NB)
@@ -144,37 +154,27 @@ ncols <- 300 # number of columns for Report.sso file
        set.seed(i)
        # Bias correction added
        Eps_k = rnorm(NROW(EpsList[[ar]]), mean = 0, sd = SDcond[ar])
+       Eps_s[1] <- Eps_k[1] * SDmarg/SDcond[ar]           # BUG #2
        for (t in 2:NROW(EpsList[[ar]])) {
-         Eps_s[1] <- Eps_k[1]
-         Eps_s[t] <- Eps_s[t - 1] * AR[ar] + sqrt(1 - AR[ar]^2) * Eps_k[t]
+         Eps_s[t] <- Eps_s[t - 1] * AR[ar] + Eps_k[t]     # BUG #3
        }
-       EpsList[[ar]][, i] <- Eps_s - SDcond[ar]^2 / 2
+       EpsList[[ar]][, i] <- Eps_s - SDmarg^2 / 2         # BUG #4
      }
    }
 
-   png(file.path(fig_folder, paste0(spp, "recdevs_iteration001.png")),
-     width = width, height = height, res = resolution, units = unit)
-   toplot <- sapply(EpsList, function(x) x[, 1])
-   matplot(toplot, type = "l", las = 1, lty = 1:length(AR), col = "black",
-     xlab = "year", ylab = "recruitment deviations")
-   legend("topleft", legend = as.character(format(AR, digits = 2)),
-     lty = 1:length(AR), bty = "n")
-   dev.off()
+   # NEW SANITY CHECKS (actually, I decided to just make it a message)
+   sanity_check = function(vec, num, rel.tol=0.01, infl=0, failmessage="Sanity check failed"){
+     if( any(abs(vec-num)/(num+infl)>rel.tol) ) stop(failmessage)
+   }
+   message("exponentiated mean equals ",paste(round(sapply(EpsList, FUN=function(mat){ mean(exp(mat)) }),3),collapse=" "))
+   message("marginal standard deviation equals ",paste(round(sapply(EpsList, FUN=function(mat){ sd(mat) }),3),collapse=" "))
+   message("autocorrelation equals ",paste(round(sapply(EpsList, FUN=function(mat){ mean(apply(mat,MARGIN=2,FUN=function(vec){var(vec[-length(vec)],vec[-1])/var(vec)})) }),3),collapse=" "))
+   #
 
-   png(file.path(fig_folder, paste0(spp, "biasadjustmentcheck.png")),
-     width = width, height = height, res = resolution, units = unit)
-     par(mfrow = c(2, 1), mar = c(0, 4, 0, 0.25), oma = c(5, 1, 1, 1))
-     matplot(sapply(EpsList, colMeans), ylim = c(-0.25, 1.25), xaxt = "n",
-       pch = 21, ylab = "mean rec dev", col = "black")
-     abline(h = 0)
-     matplot(sapply(lapply(EpsList, exp), colMeans), ylim = c(-0.25, 1.25),
-       ylab = "mean exponentiated rec dev", pch = 21, col = "black")
-     abline(h = 1)
-     mtext(side = 1, line = 2.5, "iteration")
-   dev.off()
+   source("AR_recruitmentplot.R")
    # End of recruitment deviations for each species
 
-   for (ar in seq_along(AR)) {
+   for (ar in 1:length(AR)) {
    for (bias in NB) {
       run_ss3sim(
         iterations = 1:N,
@@ -186,94 +186,49 @@ ncols <- 300 # number of columns for Report.sso file
         hess_always = TRUE,
         parallel = doparallel, parallel_iterations = doparallel,
         case_files = my.cases, case_folder = case_folder,
-        user_recdevs_warn = verbose, show.output.on.console = verbose
+        user_recdevs_warn = verbose
       )
    truename <- grep(spp, my.scenarios, value = TRUE)
    sppname <- paste0(substr(spp, 1, 1), letters[ar], ifelse(bias == 0, "n", "y"))
    for (scen in truename) {
-
      # Copy to a new species name for the level of autocorrelation
      newscenname <- gsub(spp, sppname, scen)
      file.rename(scen, newscenname)
+    # z == Set AR to zero; t == Set AR to true AR; x == externally estimate AR
+    for (type in types) {
+      thisname <- gsub(spp, paste0(sppname, type), scen)
+      # Copy folder with new species name given the type
+      system(paste("xcopy", newscenname, thisname, "/E /S /H /I"),
+         show.output.on.console = verbose)
 
-     # Copy and set AR to zero
-     thisname <- gsub(spp, paste0(sppname, "z"), scen)
-     system(paste("xcopy", newscenname, thisname, "/E /S /H /I"),
-       show.output.on.console = verbose)
-     currentwd <- getwd()
-     for (it in 1:N) {
-       setwd(file.path(thisname, it, "em"))
-       emctl <- readLines("em.ctl")
-       changeline <- grep("# SR_autocorr", emctl)
-       emctl[changeline] <- "-1 1 0 0 -1 0 -5 # SR_autocorr"
-       writeLines(emctl, "em.ctl")
-       ignore <- system(get_bin(), show.output.on.console = verbose)
-       setwd(currentwd)
-     } # End loop over iterations for AR == 0 in EM
+      # Use parallel processing to loop through each iteration
+      if (type == "t") {
+        truearvalue <- AR[ar]
+      } else truearvalue <- NULL
+      if (doparallel) {
+        foreach(it = 1:N) %dopar% {
+          em(it = it, type = type, truear = truearvalue, dir = dir.main,
+            sppold = spp, sppnew = sppname, scenario = scen,
+            verbose = verbose)
+        } # End parallel loop over each iteration
+      } else {
+        for (it in 1:N) {
+          em(it = it, type = type, truear = truearvalue, dir = dir.main,
+            sppold = spp, sppnew = sppname, scenario = scen,
+            verbose = verbose)
+        }
+      } # End non-parallel loop over each iteration
 
-     # Copy and set AR to true AR
-     thisname <- gsub(spp, paste0(sppname, "t"), scen)
-     system(paste("xcopy", newscenname, thisname, "/E /S /H /I"),
-       show.output.on.console = verbose)
-     currentwd <- getwd()
-     for (it in 1:N) {
-       setwd(file.path(thisname, it, "em"))
-       emctl <- readLines("em.ctl")
-       changeline <- grep("# SR_autocorr", emctl)
-       emctl[changeline] <- paste("-1 1", AR[ar], "0 -1 0 -5 # SR_autocorr")
-       writeLines(emctl, "em.ctl")
-       ignore <- system(get_bin(), show.output.on.console = verbose)
-       setwd(currentwd)
-     } # End loop over iterations for AR == 0 in EM
-
-     # Copy and set AR to zero
-     thisname <- gsub(spp, paste0(sppname, "x"), scen)
-     system(paste("xcopy", newscenname, thisname, "/E /S /H /I"),
-       show.output.on.console = verbose)
-     setwd(thisname)
-     iters <- dir(pattern = "[0-9]+$")
-     #' Work through each iteration
-     for (it in seq_along(iters)) {
-       setwd(file.path(iters[it], "em"))
-       grad <- readLines("Report.sso", n = 18)
-       grad <- as.numeric(strsplit(grep("Convergence_Level:", grad, value = TRUE),
-         "[[:space:]]")[[1]][2])
-       converged <- grad < 0.01
-       if (!converged) {
-         setwd("../..")
-         unlink(it, recursive = TRUE)
-         next
-       } # End if for non-convergence
-     #' Check to see if certain files exist for obtaining the results
-     checkexists <- mapply(file.exists, checkfiles)
-     results <- SS_output(dir = getwd(), ncols = ncols,
-       covar = checkexists["CompReport.sso"],
-       forecast = FALSE,
-       NoCompOK = !checkexists["CompReport.sso"],
-       warn = verbose, verbose = verbose, printstats = verbose)
-       recruits <- results$timeseries$Recruit_0
-       r0 <- results$parameters[
-       results$parameters$Label == "SR_LN(R0)", "Value"]
-     recdev <- results$parameters[
-       grep("Main_RecrDev_", results$parameters$Label), "Value"]
-     # Calculate the autocorrelation
-     forss <- acf(recdev[timeframe[1]:timeframe[2]], plot = FALSE,
-       na.action = na.omit)[lag]$acf[1]
-     ss3ctl <- readLines(list.files(pattern = "ctl$"))
-     changeline <- grep("SR_autocorr", ss3ctl)
-     ss3ctl[changeline] <- paste("-1 1", forss, "0 -1 0 -5 # SR_autocorr")
-     writeLines(ss3ctl, list.files(pattern = "ctl$"))
-       ignore <- system(get_bin(), show.output.on.console = verbose)
-     setwd("../..")
-   } # End loop over iterations for AR == external estimate
-
-   setwd(currentwd)
+    } # End loop over each type of EM
    } # End loop over each scenario
    } # End bias adjustment number loop
    } # End loop over AR level
  } # End species loop
 
+if (doparallel) stopCluster(cl)
+
 detach("package:ss3sim", unload = TRUE)
 devtools::install_github("ss3sim/ss3sim@derivedquant") #use to get results
 library(ss3sim)
 get_results_all()
+
