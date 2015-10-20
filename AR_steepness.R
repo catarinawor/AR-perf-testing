@@ -1,5 +1,14 @@
 #' Simulate steepness fixed at 1.00
 
+#' Check cod was the last species ran, such that the recruitment
+#' deviations will be specific for cod
+if (spp != "cod") {
+  stop(paste("The last species ran was", spp, "and not cod.\n",
+    "Please generate recruitment deviations specific for cod\n",
+    "before running the rest of AR_steepness.R -KFJ"))
+}
+
+#' Inputs needed to run the steepness exploratory runs.
 newspp <- "ste"
 arvalue <- tail(AR, 1)
 dir.create(newspp)
