@@ -233,6 +233,9 @@ ncols <- 300 # number of columns for Report.sso file
  } # End if runsim
  } # End species loop
 
+# Run script which fixes steepness at 1.0
+source("AR_steepness.R", echo = verbose)
+
 if (doparallel) stopCluster(cl)
 
 detach("package:ss3sim", unload = TRUE)
