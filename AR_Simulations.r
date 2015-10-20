@@ -51,7 +51,7 @@ if (Sys.getenv("USERNAME") == "Elizabeth.Councill") {
 }
 if (Sys.getenv("USERNAME") == "kelli") {
   dir.main <- "C:/AR-perf-testing"
-  if(!exists(dir.main)) {
+  if(!file.exists(dir.main)) {
     dir.main <- "T:/AR-perf-testing"
   }
 }
