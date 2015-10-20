@@ -24,7 +24,7 @@ devtools::install_github("r4ss/r4ss@master")
 
 # Variable inputs
  doparallel <- TRUE
- runsim <- TRUE
+ runsim <- FALSE
  AR = c(-0.25, 0, 0.25, 0.5, 0.75, 0.9) # levels of autocorrelation
  N = 100 # number of replicates
  NB = 5 # number of bias adjustment runs
@@ -124,6 +124,15 @@ if (doparallel) {
 source("generateCaseFiles.R")
 # Source the code for running EM; code is a function
 source("em.R")
+
+# Copy executable into ss3sim bin
+binfolder <- dirname(get_bin())
+ss3simtpl <- list.files(binfolder, full.names = TRUE)
+ss3simnew <- file.path(dirname(ss3simtpl), c("opt", "safe"))
+ignore <- file.rename(ss3simtpl, ss3simnew)
+goodtpl <- list.files(file.path(dir.main, "tpl"),
+  pattern = "\\.exe", full.names = TRUE)
+ignore <- file.copy(goodtpl, ss3simtpl)
 
 # Set scenario names and classify which letters are used
 # D == data; F = fishing; E = number of forecast years
