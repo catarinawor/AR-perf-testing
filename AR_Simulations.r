@@ -71,6 +71,9 @@ if (Sys.getenv("USERNAME") == "James.Thorson") {
  done <- file.copy(system.file("models", my.spp, package = "ss3models"), ".",
    recursive = TRUE)
 
+# Source functions
+ignore <- mapply(source, list.files("R", full.names = TRUE))
+
 # Set up parallel running
 if (doparallel) {
   numcores <- Sys.getenv("NUMBER_OF_PROCESSORS")
@@ -122,8 +125,6 @@ if (doparallel) {
 
 # Write casefiles, this assumes your working directory is currently
 source("generateCaseFiles.R")
-# Source the code for running EM; code is a function
-source("em.R")
 
 # Copy executable into ss3sim bin
 binfolder <- dirname(get_bin())
