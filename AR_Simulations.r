@@ -24,6 +24,7 @@ devtools::install_github("r4ss/r4ss@master")
 
 # Variable inputs
  doparallel <- TRUE
+ runsim <- TRUE
  SDmarg <- 0.6 # rec devs
  AR = c(-0.25, 0, 0.25, 0.5, 0.75, 0.9) # levels of autocorrelation
  N = 100 # number of replicates
@@ -174,6 +175,7 @@ ncols <- 300 # number of columns for Report.sso file
    source("AR_recruitmentplot.R")
    # End of recruitment deviations for each species
 
+  if (runsim) {
    for (ar in 1:length(AR)) {
    for (bias in NB) {
       run_ss3sim(
@@ -223,6 +225,7 @@ ncols <- 300 # number of columns for Report.sso file
    } # End loop over each scenario
    } # End bias adjustment number loop
    } # End loop over AR level
+ } # End if runsim
  } # End species loop
 
 if (doparallel) stopCluster(cl)
