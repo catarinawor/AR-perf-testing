@@ -26,8 +26,8 @@ devtools::install_github("r4ss/r4ss@master")
  doparallel <- TRUE
  runsim <- FALSE
  AR = c(-0.25, 0, 0.25, 0.5, 0.75, 0.9) # levels of autocorrelation
- N = 100 # number of replicates
- NB = 5 # number of bias adjustment runs
+ N = 2 # number of replicates
+ NB = 2 # number of bias adjustment runs
  nyears <- 100 # length of simulation
  burnin <- 25 # length of burnin period
  my.dats <- c(100, 2000, 0.1) # amount of data (low, high, CV)
@@ -40,6 +40,10 @@ devtools::install_github("r4ss/r4ss@master")
  height <- 600
  unit <- "px"
  types <- c("z", "t", "x") # EM types, see "em"
+ # no label -- estimate internally
+ # t -- fixed at true value
+ # x -- estimate externally and then fix
+ # z -- fix at zero
 
 if (length(my.spp) > 1| length(my.forecasts) > 1) {
   stop("some code needs to be re-written to accommodate more species or forecasts")
@@ -59,15 +63,14 @@ if (Sys.getenv("USERNAME") == "kfjohns") {
   dir.main <- "T:/AR-perf-testing"
 }
 if (Sys.getenv("USERNAME") == "James.Thorson") {
-  Date = Sys.Date()
-  dir.main <- paste0("C:/Users/James.Thorson/Desktop/UW Hideaway/Collaborations/2015 -- Councill AR recruitment/Runs_",Date,"/")
+  dir.main <- paste0("C:/Users/James.Thorson/Desktop/Project_git/AR-perf-testing")
 }
- setwd(dir.main)
  case_folder <- file.path(dir.main, "cases")
  fig_folder <- file.path(dir.main, "figures")
 
  dir.create(case_folder, recursive = TRUE, showWarnings = verbose)
  dir.create(fig_folder, recursive = TRUE, showWarnings = verbose)
+ setwd(dir.main)
  done <- file.copy(system.file("models", my.spp, package = "ss3models"), ".",
    recursive = TRUE)
 
