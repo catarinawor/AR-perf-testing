@@ -20,6 +20,7 @@ devtools::install_github("r4ss/r4ss@master")
  library("r4ss")
  library(doParallel) #For parallel
  library(foreach)
+ library(ggplot2)
  library(knitr) # To compile output
 
 # Variable inputs
