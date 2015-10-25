@@ -1,0 +1,17 @@
+factAR <- function(x, levels = c(-0.25, 0, 0.25, 0.5, 0.75, 0.9)) {
+  levels <- format(levels, nsmall = 2)
+  beg <- substring(x, 2, 2)
+  answer <- levels[match(beg, letters)]
+  return(answer)
+}
+
+factEM <- function(x, levels = c("true", "zero", "internal", "external")) {
+  truelevels <- levels(x)
+  x <- as.character(x)
+  x[x %in% truelevels[which(nchar(truelevels) == 3)]] <- levels[3]
+  x[x %in% grep("t$", truelevels, value = TRUE)] <- levels[1]
+  x[x %in% grep("x$", truelevels, value = TRUE)] <- levels[4]
+  x[x %in% grep("z$", truelevels, value = TRUE)] <- levels[2]
+  x <- factor(x, levels = levels, labels = levels)
+  return(x)
+}
