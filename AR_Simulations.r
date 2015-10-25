@@ -27,8 +27,8 @@ devtools::install_github("r4ss/r4ss@master")
  doparallel <- TRUE
  runsim <- TRUE
  AR = c(-0.25, 0, 0.25, 0.5, 0.75, 0.9) # levels of autocorrelation
- N = 2 # number of replicates
- NB = 2 # number of bias adjustment runs
+ N = 100 # number of replicates
+ NB = 5 # number of bias adjustment runs
  nyears <- 100 # length of simulation
  burnin <- 25 # length of burnin period
  my.dats <- c(100, 2000, 0.1) # amount of data (low, high, CV)
