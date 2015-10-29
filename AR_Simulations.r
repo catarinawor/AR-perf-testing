@@ -24,7 +24,7 @@ devtools::install_github("r4ss/r4ss@master")
 
 # Variable inputs
  doparallel <- TRUE
- runsim <- FALSE
+ runsim <- TRUE
  AR = c(-0.25, 0, 0.25, 0.5, 0.75, 0.9) # levels of autocorrelation
  N = 2 # number of replicates
  NB = 2 # number of bias adjustment runs
@@ -64,6 +64,7 @@ if (Sys.getenv("USERNAME") == "kfjohns") {
 }
 if (Sys.getenv("USERNAME") == "James.Thorson") {
   dir.main <- paste0("C:/Users/James.Thorson/Desktop/Project_git/AR-perf-testing")
+  # ALSO PUT MODIFIED EXE IN: C:\Users\James.Thorson\Documents\R\R-3.2.0\library\ss3sim\bin\Windows64
 }
  case_folder <- file.path(dir.main, "cases")
  fig_folder <- file.path(dir.main, "figures")
