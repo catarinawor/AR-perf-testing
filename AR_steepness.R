@@ -21,6 +21,11 @@ r4ss::SS_changepars(dir = file.path(newspp, "om"),
   ctlfile = list.files(file.path(newspp, "om"), pattern = "\\.ctl"),
   newctlfile = list.files(file.path(newspp, "om"), pattern = "\\.ctl"),
   strings = "SR_BH_steep", newvals = 1.0, estimate = NULL)
+steom <- readLines(list.files(file.path(newspp, "om"), pattern = "\\.par",
+  full.names = TRUE))
+steom[grep("# SR_parm\\[2\\]:", steom) + 1] <- 1.0
+writeLines(steom, list.files(file.path(newspp, "om"), pattern = "\\.par",
+  full.names = TRUE))
 #' Change steepness in the EM to 1.0 & AR to the true value
 r4ss::SS_changepars(dir = file.path(newspp, "em"),
   ctlfile = list.files(file.path(newspp, "em"), pattern = "\\.ctl"),
@@ -60,3 +65,12 @@ sink()
     case_files = my.cases, case_folder = case_folder,
     user_recdevs_warn = verbose, show.output.on.console = verbose
   )
+
+get_results_all(user_scenario = dir(pattern = newspp))
+sc1 <- read.csv("ss3sim_scalar.csv")
+ts1 <- read.csv("ss3sim_ts.csv")
+ts1 <- calculate_re(ts1, add = TRUE)
+plot_ts_boxplot(ts1, y = "SpawnBio_re", relative.error = TRUE)
+ggplot2::ggsave(filename = "steepnessSSB.png",
+  path = tail(dir(pattern = "fig"), 1))
+dev.off()
