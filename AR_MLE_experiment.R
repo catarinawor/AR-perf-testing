@@ -46,6 +46,7 @@ png( file="Experiment_comparing_MLE_and_external_estimators.png", width=10, heig
   for(s in 1:length(AR_set)){
     plot( x=Results[s,,'external'], y=Results[s,,'MLE'], main=paste0("AR=",AR_set[s]), xlim=c(-1,1), ylim=c(-1,1), xlab="", ylab="")
     abline( a=0, b=1)
+      legend( "topleft", legend=round(mean(Results[s,,'MLE']),3))
   }
   mtext(side=1, outer=TRUE, text="using acf function", line=0.5)
   mtext(side=2, outer=TRUE, text="MLE", line=0.5)
