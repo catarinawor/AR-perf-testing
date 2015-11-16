@@ -12751,7 +12751,7 @@ FUNCTION evaluate_the_objective_function
         recr_like += norm2(recdev(recdev_first,recdev_end))/two_sigmaRsq;
       }else{
         rho=SR_parm(N_SRparm2);
-        recr_like = (biasadj(styr-nages)*sd_offset)*log(sigmaR) + (sd_offset_rec-biasadj(styr-nages)*sd_offset)*log(sigmaR*sqrt(1-rho*rho)); 
+        recr_like = (biasadj(recdev_first)*sd_offset)*log(sigmaR) + (sd_offset_rec-biasadj(recdev_first)*sd_offset)*log(sigmaR*sqrt(1-rho*rho));
         recr_like += square(recdev(recdev_first))/two_sigmaRsq;
         for(y=recdev_first+1;y<=recdev_end;y++){
           recr_like += square(recdev(y)-rho*recdev(y-1)) / ((1.0-rho*rho)*two_sigmaRsq);
