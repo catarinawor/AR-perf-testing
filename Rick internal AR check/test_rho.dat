@@ -1,0 +1,244 @@
+#V3.24Y
+#_SS-V3.24Y-safe;_08/27/2015;_Stock_Synthesis_by_Richard_Methot_(NOAA)_using_ADMB_11.1x64
+#_Start_time: Sun Nov 08 20:54:39 2015
+#_Number_of_datafiles: 1
+#C  data file comments go here
+#_observed data: 
+1 #_styr
+80 #_endyr
+1 #_nseas
+ 12 #_months/season
+1 #_spawn_seas
+1 #_Nfleet
+1 #_Nsurveys
+1 #_N_areas
+FISHERY1%recruits
+ 0.5 0.5 #_surveytiming_in_season
+ 1 1 #_area_assignments_for_each_fishery_and_survey
+ 1 #_units of catch:  1=bio; 2=num
+ 0.01 #_se of log(catch) only used for init_eq_catch and for Fmethod 2 and 3; use -1 for discard only fleets
+1 #_Ngenders
+40 #_Nages
+ 0 #_init_equil_catch_for_each_fishery
+80 #_N_lines_of_catch_to_read
+#_catch_biomass(mtons):_columns_are_fisheries,year,season
+ 100	1	1
+100	2	1
+100	3	1
+100	4	1
+100	5	1
+100	6	1
+100	7	1
+100	8	1
+100	9	1
+100	10	1
+100	11	1
+100	12	1
+100	13	1
+100	14	1
+100	15	1
+100	16	1
+100	17	1
+100	18	1
+100	19	1
+100	20	1
+100	21	1
+100	22	1
+100	23	1
+100	24	1
+100	25	1
+100	26	1
+100	27	1
+100	28	1
+100	29	1
+100	30	1
+100	31	1
+100	32	1
+100	33	1
+100	34	1
+100	35	1
+100	36	1
+100	37	1
+100	38	1
+100	39	1
+100	40	1
+100	41	1
+100	42	1
+100	43	1
+100	44	1
+100	45	1
+100	46	1
+100	47	1
+100	48	1
+100	49	1
+100	50	1
+100	51	1
+100	52	1
+100	53	1
+100	54	1
+100	55	1
+100	56	1
+100	57	1
+100	58	1
+100	59	1
+100	60	1
+100	61	1
+100	62	1
+100	63	1
+100	64	1
+100	65	1
+100	66	1
+100	67	1
+100	68	1
+100	69	1
+100	70	1
+100	71	1
+100	72	1
+100	73	1
+100	74	1
+100	75	1
+100	76	1
+100	77	1
+100	78	1
+100	79	1
+100	80	1
+
+#
+80 #_N_cpue_and_surveyabundance_observations
+#_Units:  0=numbers; 1=biomass; 2=F
+#_Errtype:  -1=normal; 0=lognormal; >0=T
+#_Fleet Units Errtype
+1 1 0 # FISHERY1
+2 0 0 # SURVEY1
+
+#_year seas index obs err
+1	1	2	2.304581274	0.01
+2	1	2	0.963556261	0.01
+3	1	2	0.741506019	0.01
+4	1	2	0.717229791	0.01
+5	1	2	0.581333893	0.01
+6	1	2	0.527628416	0.01
+7	1	2	0.904368834	0.01
+8	1	2	0.877416048	0.01
+9	1	2	0.948849956	0.01
+10	1	2	1.99846223	0.01
+11	1	2	1.537031563	0.01
+12	1	2	3.05274138	0.01
+13	1	2	3.700026567	0.01
+14	1	2	2.06764856	0.01
+15	1	2	2.664517525	0.01
+16	1	2	1.844154672	0.01
+17	1	2	0.957325998	0.01
+18	1	2	0.845128155	0.01
+19	1	2	0.88178766	0.01
+20	1	2	1.270496794	0.01
+21	1	2	1.448606413	0.01
+22	1	2	1.4764477	0.01
+23	1	2	1.835320269	0.01
+24	1	2	0.804763366	0.01
+25	1	2	1.339569107	0.01
+26	1	2	1.185281145	0.01
+27	1	2	1.357422933	0.01
+28	1	2	1.374073932	0.01
+29	1	2	0.801196535	0.01
+30	1	2	0.78156575	0.01
+31	1	2	0.628197922	0.01
+32	1	2	0.976792338	0.01
+33	1	2	0.986680204	0.01
+34	1	2	0.92877729	0.01
+35	1	2	0.800430957	0.01
+36	1	2	0.70749197	0.01
+37	1	2	1.141717834	0.01
+38	1	2	0.700079765	0.01
+39	1	2	0.765236762	0.01
+40	1	2	0.937378809	0.01
+41	1	2	1.418761063	0.01
+42	1	2	0.898204058	0.01
+43	1	2	0.824848125	0.01
+44	1	2	0.553987586	0.01
+45	1	2	0.624529321	0.01
+46	1	2	0.660689032	0.01
+47	1	2	1.24682086	0.01
+48	1	2	1.316653118	0.01
+49	1	2	1.141529466	0.01
+50	1	2	1.41724947	0.01
+51	1	2	1.044295087	0.01
+52	1	2	0.979233457	0.01
+53	1	2	1.079710446	0.01
+54	1	2	1.803492387	0.01
+55	1	2	1.657935245	0.01
+56	1	2	1.461439633	0.01
+57	1	2	0.674749344	0.01
+58	1	2	0.881207635	0.01
+59	1	2	0.955299954	0.01
+60	1	2	0.687562874	0.01
+61	1	2	0.818039218	0.01
+62	1	2	0.918246322	0.01
+63	1	2	1.111476154	0.01
+64	1	2	1.293041248	0.01
+65	1	2	1.220173425	0.01
+66	1	2	1.558543919	0.01
+67	1	2	1.565678067	0.01
+68	1	2	1.792719965	0.01
+69	1	2	1.990888457	0.01
+70	1	2	1.728048954	0.01
+71	1	2	1.467210531	0.01
+72	1	2	0.845424002	0.01
+73	1	2	0.713763931	0.01
+74	1	2	0.601203981	0.01
+75	1	2	0.422166286	0.01
+76	1	2	0.394371469	0.01
+77	1	2	0.443435909	0.01
+78	1	2	0.527418989	0.01
+79	1	2	0.682838435	0.01
+80	1	2	1.837667308	0.01
+
+
+0 #_N_fleets_with_discard
+#_discard_units (1=same_as_catchunits(bio/num); 2=fraction; 3=numbers)
+#_discard_errtype:  >0 for DF of T-dist(read CV below); 0 for normal with CV; -1 for normal with se; -2 for lognormal
+#Fleet Disc_units err_type
+0 #N discard obs
+#_year seas index obs err
+#
+0 #_N_meanbodywt_obs
+30 #_DF_for_meanbodywt_T-distribution_like
+
+2 # length bin method: 1=use databins; 2=generate from binwidth,min,max below; 3=read vector
+2 # binwidth for population size comp 
+10 # minimum size in the population (lower edge of first bin and size at age 0.00) 
+94 # maximum size in the population (lower edge of last bin) 
+
+0 #_comp_tail_compression
+1e-007 #_add_to_comp
+0 #_combine males into females at or below this bin number
+25 #_N_LengthBins
+ 26 28 30 32 34 36 38 40 42 44 46 48 50 52 54 56 58 60 62 64 68 72 76 80 90
+0 #_N_Length_obs
+#Yr Seas Flt/Svy Gender Part Nsamp datavector(female-male)
+
+17 #_N_age_bins
+ 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 20 25
+1 #_N_ageerror_definitions
+ 0.5 1.5 2.5 3.5 4.5 5.5 6.5 7.5 8.5 9.5 10.5 11.5 12.5 13.5 14.5 15.5 16.5 17.5 18.5 19.5 20.5 21.5 22.5 23.5 24.5 25.5 26.5 27.5 28.5 29.5 30.5 31.5 32.5 33.5 34.5 35.5 36.5 37.5 38.5 39.5 40.5
+ 0.001 0.001 0.001 0.001 0.001 0.001 0.001 0.001 0.001 0.001 0.001 0.001 0.001 0.001 0.001 0.001 0.001 0.001 0.001 0.001 0.001 0.001 0.001 0.001 0.001 0.001 0.001 0.001 0.001 0.001 0.001 0.001 0.001 0.001 0.001 0.001 0.001 0.001 0.001 0.001 0.001
+0 #_N_Agecomp_obs
+1 #_Lbin_method: 1=poplenbins; 2=datalenbins; 3=lengths
+1 #_combine males into females at or below this bin number
+#Yr Seas Flt/Svy Gender Part Ageerr Lbin_lo Lbin_hi Nsamp datavector(female-male)
+
+0 #_N_MeanSize-at-Age_obs
+#Yr Seas Flt/Svy Gender Part Ageerr Ignore datavector(female-male)
+#                                          samplesize(female-male)
+
+0 #_N_environ_variables
+0 #_N_environ_obs
+0 # N sizefreq methods to read 
+
+0 # do tags (0/1)
+
+0 # no morphcomp data 
+
+999
+
+ENDDATA
