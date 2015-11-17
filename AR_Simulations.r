@@ -144,9 +144,9 @@ ignore <- file.copy(goodtpl, ss3simtpl)
 # D == data; F = fishing; E = number of forecast years
 my.scenarios <- expand_scenarios(cases = list(D = 0, E = my.forecasts,
   A = my.dats[1], L = my.dats[1], F = 1), species = my.spp)
-my.scenarios <- expand_scenarios(cases = list(D = 0,
+my.scenarios <- c(my.scenarios, expand_scenarios(cases = list(D = 0,
   E = paste0(1, my.forecasts),
-  A = my.dats[c(1, 4)], L = 0, F = 1), species = my.spp)
+  A = my.dats[c(1, 4)], L = 0, F = 1), species = my.spp))
 my.cases <- list(D = "index", A = "agecomp", L = "lcomp", E = "E", F = "F")
 lag <- 1 # Lag used for external estimate of autocorrelated rec devs
 timeframe <- c(burnin + 1, nyears - my.forecasts) # Time frame to use for external estimate
