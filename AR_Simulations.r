@@ -31,7 +31,7 @@ devtools::install_github("r4ss/r4ss@master")
  NB = 5 # number of bias adjustment runs
  nyears <- 100 # length of simulation
  burnin <- 25 # length of burnin period
- my.dats <- c(100, 2000, 0.1) # amount of data (low, high, CV)
+ my.dats <- c(100, 2000, 0.1, 25) # amount of data (low, high, CV, lower)
  my.forecasts <- c(20) # number of forecast years
  my.spp <- c("cod") # spp to include in the simulation
  verbose <- FALSE # show warnings and information
@@ -144,6 +144,9 @@ ignore <- file.copy(goodtpl, ss3simtpl)
 # D == data; F = fishing; E = number of forecast years
 my.scenarios <- expand_scenarios(cases = list(D = 0, E = my.forecasts,
   A = my.dats[1], L = my.dats[1], F = 1), species = my.spp)
+my.scenarios <- expand_scenarios(cases = list(D = 0,
+  E = paste0(1, my.forecasts),
+  A = my.dats[c(1, 4)], L = 0, F = 1), species = my.spp)
 my.cases <- list(D = "index", A = "agecomp", L = "lcomp", E = "E", F = "F")
 lag <- 1 # Lag used for external estimate of autocorrelated rec devs
 timeframe <- c(burnin + 1, nyears - my.forecasts) # Time frame to use for external estimate
@@ -205,7 +208,16 @@ ncols <- 300 # number of columns for Report.sso file
    for (scen in truename) {
      # Copy to a new species name for the level of autocorrelation
      newscenname <- gsub(spp, sppname, scen)
-     file.rename(scen, newscenname)
+     didit <- file.rename(scen, newscenname)
+     if (!didit) { # An if statement in case a file was left open
+       closeAllConnections()
+       if (doparallel) {
+         cl <- makeCluster(numcores)
+         registerDoParallel(cl)
+       }
+       didit <- file.rename(scen, newscenname)
+       if (!didit) browser()
+     }
     # z == Set AR to zero; t == Set AR to true AR; x == externally estimate AR
     for (type in types) {
       thisname <- gsub(spp, paste0(sppname, type), scen)

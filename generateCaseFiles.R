@@ -85,7 +85,6 @@ case_index(fleets = 2,
   years = list(all.surv), sd = list(my.dats[3]), case = 0, spp = my.spp)
 
 # Age comp
-
 # Low data with fishery and survey and dirichlet
 case_comp(fleets = 1:2,
   Nsamp = list(rep(my.dats[1], length(all.fish)), rep(my.dats[1], length(all.surv))),
@@ -95,6 +94,11 @@ case_comp(fleets = 1:2,
   Nsamp = list(rep(my.dats[2], length(all.fish)), rep(my.dats[2], length(all.surv))),
   years = list(all.fish, all.surv), cpar = 2:1,
   type = "agecomp", case = my.dats[2], spp = my.spp)
+case_comp(fleets = 1:2,
+  Nsamp = list(rep(my.dats[4], length(all.fish)), rep(my.dats[4], length(all.surv))),
+  years = list(all.fish, all.surv), cpar = 2:1,
+  type = "agecomp", case = my.dats[4], spp = my.spp)
+
 # Length comp
 case_comp(fleets = 1:2,
   Nsamp = list(rep(my.dats[1], length(all.fish)), rep(my.dats[1], length(all.surv))),
@@ -104,6 +108,8 @@ case_comp(fleets = 1:2,
   Nsamp = list(rep(my.dats[2], length(all.fish)), rep(my.dats[2], length(all.surv))),
   years = list(all.fish, all.surv), cpar = 2:1,
   type = "lcomp", case = my.dats[2], spp = my.spp)
+case_comp(fleets = NULL, Nsamp = NULL, years = NULL, cpar = 1,
+  type = "lcomp", case = 0, spp = my.spp)
 
 ## Generate casefiles for different lengths of forecasting using E
 for (f in 1:length(my.forecasts)){
@@ -117,6 +123,21 @@ for (f in 1:length(my.forecasts)){
     "par_name; NULL",
     "par_int; NA",
     "par_phase; NULL",
+    paste("forecast_num;", my.forecasts)))
+    )
+}
+# Each forecast length but turn growth off
+for (f in 1:length(my.forecasts)){
+    file.current <- paste0("E1", my.forecasts[f], "-", my.spp, ".txt")
+    mapply(writeLines, con = file.current, MoreArgs = list(c(
+    "# description: Fixed M, no qSurvey, w a given forecast number",
+    "natM_type; 1Parm",
+    "natM_n_breakpoints; NULL",
+    "natM_lorenzen; NULL",
+    "natM_val; c(NA, -1)",
+    "par_name; c(\"L_at_Amin_Fem_GP_1\", \"L_at_Amax_Fem_GP_1\",\"VonBert_K_Fem_GP_1\", \"CV_young_Fem_GP_1\", \"CV_old_Fem_GP_1\")",
+    "par_int; NA",
+    "par_phase; rep(-1, 5)",
     paste("forecast_num;", my.forecasts)))
     )
 }
