@@ -58,7 +58,12 @@ em <- function(it, sppold, sppnew, scenario, dir,
   # Delete all files produced by a run and keep just those needed for this run
   # If the run fails to converge this will ensure a leftover .covar file is not present
   ignore <- unlink(list.files()[!list.files() %in% c("em.ctl", "ss3.dat", "forecast.ss", "starter.ss")])
-  ignore <- system(ss3sim::get_bin(), show.output.on.console = verbose)
+  bin <- paste(ss3sim::get_bin(), "exe", sep = ".")
+  file.copy(bin, file.path(empath, basename(bin)))
+  system(basename(bin), invisible = TRUE, show.output.on.console = verbose)
+
+  setwd(dir)
+  fitbias(scenario = currentdirectory, iteration = it, dir = dir, verbose = verbose)
 
   return(print(newpath))
 }
