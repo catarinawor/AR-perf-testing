@@ -136,7 +136,7 @@ binfolder <- dirname(get_bin())
 ss3simtpl <- list.files(binfolder, full.names = TRUE)
 ss3simnew <- file.path(dirname(ss3simtpl), c("opt", "safe"))
 ignore <- file.rename(ss3simtpl, ss3simnew)
-goodtpl <- list.files(file.path(dir.main, "tpl", "V2"),
+goodtpl <- list.files(file.path(dir.main, "tpl", "V4"),
   pattern = "\\.exe", full.names = TRUE)
 ignore <- file.copy(goodtpl, ss3simtpl)
 
