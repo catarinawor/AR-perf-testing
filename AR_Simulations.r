@@ -22,6 +22,7 @@ devtools::install_github("r4ss/r4ss@master")
  library(foreach)
  library(ggplot2)
  library(knitr) # To compile output
+ library(xtable)
 
 # Variable inputs
  doparallel <- TRUE
