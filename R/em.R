@@ -14,8 +14,8 @@
 em <- function(it, sppold, sppnew, scenario, dir,
   type = c("z", "t", "x"), truear = NULL, verbose = FALSE) {
 
-  setwd(dir)
-  on.exit(setwd(dir))
+  old_wd <- getwd()
+  on.exit(setwd(old_wd))
 
   type <- match.arg(type, choices = c("z", "t", "x"), several.ok = FALSE)
   artemplate <- "-1 1 0 0 -1 0 -5 # SR_autocorr"
@@ -25,11 +25,7 @@ em <- function(it, sppold, sppnew, scenario, dir,
   flush.console()
   scenarioname <- gsub(sppold, sppnew, scenario)
 
-  newpath <- file.path(dir, currentdirectory, it, "em")
-  if (!file.exists(newpath)) {
-    stop(paste(newpath, "does not exist you are in", getwd()))
-  }
-  setwd(newpath)
+  setwd(file.path(dir, currentdirectory, it, "em"))
   emctl <- readLines("em.ctl")
   changeline <- grep("# SR_autocorr", emctl)
 
