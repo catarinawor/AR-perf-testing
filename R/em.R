@@ -36,20 +36,10 @@ em <- function(it, sppold, sppnew, scenario, dir,
     emctl[changeline] <- temp
   }
   if (type == "x") {
-    # Check for convergence
-    grad <- readLines("Report.sso", n = 18)
-    grad <- grep("Convergence_Level:", grad, value = TRUE)
-    grad <- as.numeric(strsplit(grad, "[[:space:]]")[[1]][2])
-    if (!grad < 0.01) {
-      unlink(it, recursive = TRUE)
-      return()
-    } # End if for non-convergence
-    #' Check to see if certain files exist for obtaining the results
-    checkexists <- mapply(file.exists, checkfiles)
     results <- r4ss::SS_output(dir = getwd(), ncols = ncols,
-      covar = checkexists["CompReport.sso"],
+      covar = file.exists("CompReport.sso"),
       forecast = FALSE,
-      NoCompOK = !checkexists["CompReport.sso"],
+      NoCompOK = !file.exists("CompReport.sso"),
       warn = verbose, verbose = verbose, printstats = verbose, hidewarn = !verbose)
     recruits <- results$timeseries$Recruit_0
     r0 <- results$parameters[results$parameters$Label == "SR_LN(R0)", "Value"]
