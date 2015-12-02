@@ -18,6 +18,7 @@ em <- function(it, sppold, sppnew, scenario, dir,
   on.exit(setwd(dir))
 
   type <- match.arg(type, choices = c("z", "t", "x"), several.ok = FALSE)
+  artemplate <- "-1 1 0 0 -1 0 -5 # SR_autocorr"
 
   currentdirectory <- gsub(sppold, paste0(sppnew, type), scenario)
   print(currentdirectory)
@@ -32,8 +33,12 @@ em <- function(it, sppold, sppnew, scenario, dir,
   emctl <- readLines("em.ctl")
   changeline <- grep("# SR_autocorr", emctl)
 
-  if (type == "z") emctl[changeline] <- "-1 1 0 0 -1 0 -5 # SR_autocorr"
-  if (type == "t") emctl[changeline] <- paste("-1 1", truear, "0 -1 0 -5 # SR_autocorr")
+  if (type == "z") emctl[changeline] <- artemplate
+  if (type == "t") {
+    temp <- artemplate
+    temp[3] <- truear
+    emctl[changeline] <- temp
+  }
   if (type == "x") {
     # Check for convergence
     grad <- readLines("Report.sso", n = 18)
@@ -57,7 +62,9 @@ em <- function(it, sppold, sppnew, scenario, dir,
     # Calculate the autocorrelation
     forss <- stats::acf(recdev[timeframe[1]:timeframe[2]], plot = FALSE,
       na.action = na.omit)[lag]$acf[1]
-    emctl[changeline] <- paste("-1 1", forss, "0 -1 0 -5 # SR_autocorr")
+    temp <- strsplit(artemplate, "[[:space:]]+")[[1]]
+    temp[3] <- round(forss, 5)
+    emctl[changeline] <- paste(temp, collapse = " ")
   } # End if type is external
 
   writeLines(emctl, "em.ctl")
