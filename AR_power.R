@@ -14,7 +14,7 @@ if (spp != "cod") {
 #' Setup
 nyears.min <- 10
 nyears.power <- seq(start + burnin, nyears - my.forecasts - nyears.min, by = 100)
-data.power <- c(200, 500)
+data.power <- c(25, 100, 400, 5000)
 scenarios.power <- NULL
 basenumber <- 900000
 
@@ -25,10 +25,10 @@ for (i in seq_along(nyears.power)) {
   scenarios.power <- c(scenarios.power,
     expand_scenarios(species = my.spp, cases = list(
     D = 90 + i,
-    E = basenumber/1000 + my.forecasts,
+    E = basenumber/1000 + my.forecasts - 100,
     A = basenumber + 10000 * i + data.power,
-    # L = c(0, basenumber + 10000 * i + data.power),
-    L = c(basenumber + 10000 * i + data.power),
+    # L = c(basenumber + 10000 * i + data.power),
+    L = c(0),
     F = 90 + i)))
 #' Fishing history
   writeF(fvals =
@@ -53,6 +53,12 @@ for (i in seq_along(nyears.power)) {
     years = list(nyears.power[i]:(nyears - my.forecasts)),
     sd = list(my.dats[3]), case = 90 + i, spp = my.spp)
 }
+#' Fix fishery selectivity and growth at the truth
+writeLines(c("natM_type; 1Parm", "natM_n_breakpoints; NULL",
+  "natM_lorenzen; NULL", "natM_val; c(NA, -1)",
+  "par_name; c(\"SizeSel_1P_1_Fishery\", \"SizeSel_1P_3_Fishery\", \"L_at_Amin_Fem_GP_1\", \"L_at_Amax_Fem_GP_1\", \"VonBert_K_Fem_GP_1\", \"CV_young_Fem_GP_1\", \"CV_old_Fem_GP_1\")",
+  paste("par_int; c(50.8, 5.1, rep(NA, 5))"),
+  "par_phase; rep(-99, 7)", "forecast_num; 20"), paste0("E820-", my.spp, ".txt"))
 #' Fix fishery selectivity at the truth
 writeLines(c("natM_type; 1Parm", "natM_n_breakpoints; NULL",
   "natM_lorenzen; NULL", "natM_val; c(NA, -1)",
@@ -63,9 +69,16 @@ writeLines(c("natM_type; 1Parm", "natM_n_breakpoints; NULL",
 setwd("..")
 
 
+#' Add scenario with ages and lengths, where growth is estimated.
+scenarios.power <- c(scenarios.power,
+  paste0("A", basenumber + 10000 + tail(data.power, 1), "-D", 90 + 1,
+  "-E", basenumber/1000 + my.forecasts, "-F", basenumber/10000 + i,
+  "-L", basenumber + 10000 + tail(data.power, 1), "-", my.spp))
+
+
 #' Run the simulation
   # for (ar in 1:length(AR)) {
-  for (ar in 5) {
+  for (ar in length(AR)) {
     run_ss3sim(
       iterations = 1:N,
       scenarios = scenarios.power,
@@ -90,29 +103,22 @@ setwd("..")
       foreach(it = 1:N) %dopar% {
         fitbias(scenario = newscenario, iteration = it,
         dir = dir.main, numberofcolumns = ncols, verbose = verbose)
-      }
-
-    # # z == Set AR to zero; t == Set AR to true AR; x == externally estimate AR
-    # for (type in "x") {
-    #   # Copy folder with new species name given the type
-    #   system(paste("xcopy", newscenario, gsub(spp, paste0(sppname, type), scen),
-    #     "/E /S /H /I"), show.output.on.console = verbose)
-    #   # Use parallel processing to loop through each iteration
-    #   foreach(it = 1:N) %dopar% {
-    #     em(it = it, type = type, truear = NULL, dir = dir.main,
-    #     sppold = spp, sppnew = sppname, scenario = scen, verbose = verbose)
-    #   } # End loop over each iteration
-    # } # End loop over each type of EM
+      } # End loop over iteration
    } # End loop over each scenario
   } # End loop over AR level
 
+
+#' Read in the results
 get_results_all(overwrite_files = TRUE, parallel = doparallel)
 sc <- read.csv("ss3sim_scalar.csv")
+sc <- sc[sc$D == (basenumber / 10000):(basenumber / 10000 + i), ]
 sc$bias <- ifelse(sc$max_bias_adj_em == -1, "no", "yes")
 sc$A <- factor(as.character(sc$A), levels = levels(sc$A), labels = gsub("91", "-", levels(sc$A)))
 sc$L <- factor(as.character(sc$L), levels = levels(sc$L), labels = gsub("91", "-", levels(sc$L)))
 
-g <- ggplot(subset(sc, E == "E20")) +
+
+#' Plot the results and save them to the disk
+g <- ggplot(sc) +
 theme_bw() +
   theme(plot.background = element_blank(),
         strip.background = element_blank(),
@@ -122,5 +128,6 @@ theme_bw() +
   ) +
 geom_boxplot(aes(x = bias, y = SR_autocorr_em)) +
 facet_grid(A ~ L, scales = "fixed") +
-geom_hline(yintercept = AR[5], col = "red")
+geom_hline(yintercept = AR[5], col = "red", lty = 2) +
+ggtitle("No fishery ages and fishery selectivity fixed at the truth")
 ggsave(file.path(fig_folder, "power_rho.png"), g, height = 8, width = 8)
