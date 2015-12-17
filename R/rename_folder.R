@@ -5,7 +5,7 @@ rename_folder <- function(old, new, parallel = TRUE, numcores) {
     message("The folder", old, "was not copied properly, trying again.")
     closeAllConnections()
     if (parallel) {
-      cl <- makeCluster(numberofcores)
+      cl <- makeCluster(numcores)
       registerDoParallel(cl)
     }
     check <- file.rename(old, new)
