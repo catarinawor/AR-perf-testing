@@ -25,8 +25,9 @@ em <- function(it, sppold, sppnew, scenario, dir,
   currentdirectory <- gsub(sppold, paste0(sppnew, type), scenario)
   print(currentdirectory)
   flush.console()
+  empath <- file.path(dir, currentdirectory, it, "em")
+  setwd(empath)
 
-  setwd(file.path(dir, currentdirectory, it, "em"))
   emctl <- readLines("em.ctl")
   changeline <- grep("# SR_autocorr", emctl)
   arval <- strsplit(emctl[changeline], "[[:space:]]+")[[1]]
