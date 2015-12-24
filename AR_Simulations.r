@@ -26,7 +26,6 @@ devtools::install_github("r4ss/r4ss@master")
 
 # Variable inputs
  doparallel <- TRUE
- runsim <- TRUE
  AR = c(-0.25, 0, 0.25, 0.5, 0.75, 0.9) # levels of autocorrelation
  N = 100 # number of replicates
  nyears <- 100 # length of simulation
@@ -140,13 +139,6 @@ goodtpl <- list.files(file.path(dir.main, "tpl", "V4"),
   pattern = "\\.exe", full.names = TRUE)
 ignore <- file.copy(goodtpl, ss3simtpl)
 
-# Set scenario names and classify which letters are used
-# D == data; F = fishing; E = number of forecast years
-my.scenarios <- expand_scenarios(cases = list(D = 0, E = my.forecasts,
-  A = my.dats[1], L = my.dats[1], F = 1), species = my.spp)
-my.scenarios <- c(my.scenarios, expand_scenarios(cases = list(D = 0,
-  E = paste0(1, my.forecasts),
-  A = my.dats[c(1, 4)], L = 0, F = 1), species = my.spp))
 my.cases <- list(D = "index", A = "agecomp", L = "lcomp", E = "E", F = "F")
 lag <- 1 # Lag used for external estimate of autocorrelated rec devs
 timeframe <- c(burnin + 1, nyears - my.forecasts) # Time frame to use for external estimate
@@ -185,71 +177,12 @@ ncols <- 300 # number of columns for Report.sso file
 
    source("AR_recruitmentplot.R")
    # End of recruitment deviations for each species
-
-  if (runsim) {
-   for (ar in 1:length(AR)) {
-   for (bias in NB) {
-      run_ss3sim(
-        iterations = 1:N,
-        scenarios = my.scenarios,
-        user_recdevs = EpsList[[ar]],
-        bias_nsim = bias,
-        bias_adjust = ifelse(bias == 0, FALSE, TRUE),
-        om_dir = file.path(spp, "om"), em_dir = file.path(spp, "em"),
-        hess_always = TRUE,
-        parallel = doparallel, parallel_iterations = doparallel,
-        case_files = my.cases, case_folder = case_folder,
-        user_recdevs_warn = verbose
-      )
-   truename <- grep(spp, my.scenarios, value = TRUE)
-   sppname <- paste0(substr(spp, 1, 1), letters[ar], ifelse(bias == 0, "n", "y"))
-   for (scen in truename) {
-     # Copy to a new species name for the level of autocorrelation
-     newscenname <- gsub(spp, sppname, scen)
-     didit <- file.rename(scen, newscenname)
-     if (!didit) { # An if statement in case a file was left open
-       closeAllConnections()
-       if (doparallel) {
-         cl <- makeCluster(numcores)
-         registerDoParallel(cl)
-       }
-       didit <- file.rename(scen, newscenname)
-       if (!didit) browser()
-     }
-    # z == Set AR to zero; t == Set AR to true AR; x == externally estimate AR
-    for (type in types) {
-      thisname <- gsub(spp, paste0(sppname, type), scen)
-      # Copy folder with new species name given the type
-      system(paste("xcopy", newscenname, thisname, "/E /S /H /I"),
-         show.output.on.console = verbose)
-
-      # Use parallel processing to loop through each iteration
-      if (type == "t") {
-        truearvalue <- AR[ar]
-      } else truearvalue <- NULL
-      if (doparallel) {
-        foreach(it = 1:N) %dopar% {
-          em(it = it, type = type, truear = truearvalue, dir = dir.main,
-            sppold = spp, sppnew = sppname, scenario = scen,
-            verbose = verbose)
-        } # End parallel loop over each iteration
-      } else {
-        for (it in 1:N) {
-          em(it = it, type = type, truear = truearvalue, dir = dir.main,
-            sppold = spp, sppnew = sppname, scenario = scen,
-            verbose = verbose)
-        }
-      } # End non-parallel loop over each iteration
-
-    } # End loop over each type of EM
-   } # End loop over each scenario
-   } # End bias adjustment number loop
-   } # End loop over AR level
- } # End if runsim
  } # End species loop
 
 # Run script which fixes steepness at 1.0
 source("AR_steepness.R", echo = verbose)
+source("AR_power.R", echo = verbose)
+source("AR_lengthdata.R", echo = verbose)
 
 if (doparallel) stopCluster(cl)
 
