@@ -103,7 +103,7 @@ if (doparallel) {
    emctl[changeline] <- paste(-1, biasline, sep = " #")
    # Turn on autocorrelation estimation in em
    changeline <- grep("# SR_autocorr", emctl)
-   emctl[changeline] <- "-1 1 0 0 -1 0 5 # SR_autocorr"
+   emctl[changeline] <- "-0.99 0.99 0 0 -1 0 5 # SR_autocorr"
    # Change forecast file
    changeline <- grep("#_MSY", emfor)
    emfor[changeline] <- gsub("[0-9]+", 4, emfor[changeline])
