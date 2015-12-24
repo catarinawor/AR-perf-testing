@@ -28,6 +28,19 @@ em <- function(it, sppold, sppnew, scenario, dir,
   empath <- file.path(dir, currentdirectory, it, "em")
   setwd(empath)
 
+  # Perform a check to see if Report.sso exists, if not rerun SS3.
+  # If there is still no report file, then move out of the function.
+  if (!file.exists("Report.sso")) {
+    bin <- paste(ss3sim::get_bin(), "exe", sep = ".")
+    file.copy(bin, file.path(empath, basename(bin)))
+    system(basename(bin), invisible = TRUE, show.output.on.console = verbose)
+    if (!file.exists("Report.sso")) {
+      keepgoodfiles()
+      message <- paste(empath, "did not produce a report file.")
+      return(message)
+    }
+  }
+
   emctl <- readLines("em.ctl")
   changeline <- grep("# SR_autocorr", emctl)
   arval <- strsplit(emctl[changeline], "[[:space:]]+")[[1]]
