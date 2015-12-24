@@ -63,7 +63,8 @@ em <- function(it, sppold, sppnew, scenario, dir,
       covar = file.exists("covar.sso"),
       forecast = FALSE,
       NoCompOK = !file.exists("CompReport.sso"),
-      warn = verbose, verbose = verbose, printstats = verbose, hidewarn = !verbose)
+      warn = verbose, verbose = verbose, printstats = verbose,
+      hidewarn = !verbose)
     recruits <- results$timeseries$Recruit_0
     r0 <- results$parameters[results$parameters$Label == "SR_LN(R0)", "Value"]
     recdev <- results$parameters[
