@@ -150,8 +150,6 @@ my.scenarios <- c(my.scenarios, expand_scenarios(cases = list(D = 0,
 my.cases <- list(D = "index", A = "agecomp", L = "lcomp", E = "E", F = "F")
 lag <- 1 # Lag used for external estimate of autocorrelated rec devs
 timeframe <- c(burnin + 1, nyears - my.forecasts) # Time frame to use for external estimate
-checkfiles <- c("CompReport.sso", "covar.sso",
-  "Forecast-report.sso", "wtatage.ss_new") # Files to check if run converged
 ncols <- 300 # number of columns for Report.sso file
 
  for (spp in my.spp) {
