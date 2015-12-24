@@ -54,9 +54,9 @@ em <- function(it, sppold, sppnew, scenario, dir,
 
   if (type == "z") emctl[changeline] <- artemplate
   if (type == "t") {
-    temp <- artemplate
+    temp <- strsplit(artemplate, "[[:space:]]+")[[1]]
     temp[3] <- truear
-    emctl[changeline] <- temp
+    emctl[changeline] <- paste(temp, collapse = " ")
   }
   if (type == "x") {
     results <- r4ss::SS_output(dir = getwd(), ncols = ncols,
