@@ -29,7 +29,6 @@ devtools::install_github("r4ss/r4ss@master")
  runsim <- TRUE
  AR = c(-0.25, 0, 0.25, 0.5, 0.75, 0.9) # levels of autocorrelation
  N = 100 # number of replicates
- NB = 5 # number of bias adjustment runs
  nyears <- 100 # length of simulation
  burnin <- 25 # length of burnin period
  my.dats <- c(100, 2000, 0.1, 25) # amount of data (low, high, CV, lower)
@@ -162,7 +161,7 @@ ncols <- 300 # number of columns for Report.sso file
    SDcond = SDmarg * sqrt(1 - AR^2)     # BUG #1
    EpsList <- list()
    for (ar in seq_along(AR)) {
-     EpsList[[ar]] <- matrix(0, nrow = nyears, ncol = N + NB)
+     EpsList[[ar]] <- matrix(0, nrow = nyears, ncol = N + 5)
      # Create a temporary matrix with 1 column
      Eps_s <- matrix(0, nrow = NROW(EpsList[[ar]]), ncol = 1)
      for (i in 1:NCOL(EpsList[[ar]])) {
