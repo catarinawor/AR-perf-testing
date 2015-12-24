@@ -60,7 +60,7 @@ em <- function(it, sppold, sppnew, scenario, dir,
   }
   if (type == "x") {
     results <- r4ss::SS_output(dir = getwd(), ncols = ncols,
-      covar = file.exists("CompReport.sso"),
+      covar = file.exists("covar.sso"),
       forecast = FALSE,
       NoCompOK = !file.exists("CompReport.sso"),
       warn = verbose, verbose = verbose, printstats = verbose, hidewarn = !verbose)
