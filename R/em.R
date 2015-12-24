@@ -18,8 +18,10 @@ em <- function(it, sppold, sppnew, scenario, dir,
   on.exit(setwd(old_wd))
 
   type <- match.arg(type, choices = c("z", "t", "x"), several.ok = FALSE)
-  artemplate <- "-1 1 0 0 -1 0 -5 # SR_autocorr"
-
+  # For template LO HI INIT ExpectedVal Type SD PHASE
+  # ExpectedVal is ignored if Type == -1 or 1
+  # uniform prior
+  artemplate <- "-0.99 0.99 0 0 -1 0 -5 # SR_autocorr"
   currentdirectory <- gsub(sppold, paste0(sppnew, type), scenario)
   print(currentdirectory)
   flush.console()
