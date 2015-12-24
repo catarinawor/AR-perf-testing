@@ -22,9 +22,15 @@ em <- function(it, sppold, sppnew, scenario, dir,
   # ExpectedVal is ignored if Type == -1 or 1
   # uniform prior
   artemplate <- "-0.99 0.99 0 0 -1 0 -5 # SR_autocorr"
+  # Find the directory based on the scenario
   currentdirectory <- gsub(sppold, paste0(sppnew, type), scenario)
   print(currentdirectory)
   flush.console()
+  if (!currentdirectory %in%
+      list.dirs(dir, recursive = FALSE, full.names = FALSE)) {
+    stop(paste("The directory,", currentdirectory, "does not exist."))
+  }
+
   empath <- file.path(dir, currentdirectory, it, "em")
   setwd(empath)
 
