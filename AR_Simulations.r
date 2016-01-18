@@ -183,6 +183,7 @@ ncols <- 300 # number of columns for Report.sso file
 source("AR_steepness.R", echo = verbose)
 source("AR_power.R", echo = verbose)
 source("AR_lengthdata.R", echo = verbose)
+source("AR_sigmar.R", echo = verbose)
 
 if (doparallel) stopCluster(cl)
 
@@ -191,3 +192,4 @@ devtools::install_github("ss3sim/ss3sim@derivedquant") #use to get results
 library(ss3sim)
 get_results_all()
 
+source("AR_results.R", echo = verbose)

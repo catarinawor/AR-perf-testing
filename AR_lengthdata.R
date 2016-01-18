@@ -108,25 +108,3 @@ for (ar in 1:length(AR)) {
      } # End loop over each type of EM
    } # End loop over each scenario
   } # End loop over AR level
-
-
-#' Read in the results
-get_results_all(overwrite_files = TRUE, parallel = doparallel)
-sc <- read.csv("ss3sim_scalar.csv")
-sc <- sc[sc$D == (nages):(nages + i), ]
-sc$bias <- ifelse(sc$max_bias_adj_em == -1, "no", "yes")
-
-
-#' Plot the results and save them to the disk
-g <- ggplot(sc) +
-theme_bw() +
-  theme(plot.background = element_blank(),
-        strip.background = element_blank(),
-        panel.border = element_rect(colour = "black"),
-        legend.key = element_rect(colour = "white"),
-        legend.title = element_text(size = 0, colour = "white")
-  ) +
-geom_boxplot(aes(x = bias, y = SR_autocorr_em)) +
-facet_grid(A ~ bias, scales = "fixed") +
-geom_hline(yintercept = AR[5], col = "red", lty = 2)
-ggsave(file.path(fig_folder, "lengthdata_rho.png"), g, height = 8, width = 8)
