@@ -313,7 +313,7 @@ x <- "EM"; y <- "SR_autocorr_em"; z <- "SR_sigmaR_om"
 xlab <- "Estimated autocorrelation"
 form <- ss3sim:::facet_form(x, NULL, z, NULL)
 
-# g <-
+g <-
 ggplot(droplevels(subset(sc,
     A == "A101" &
     !EM %in% c("zero", "true") &
