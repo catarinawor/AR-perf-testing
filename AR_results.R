@@ -259,8 +259,8 @@ ggsave(file.path(fig_folder, "coveragessb.png"), g, height = height/75, width = 
 ###############################################################################
 png(file.path(fig_folder, "replicate.png"))
 temp <- droplevels(subset(dq,
-  EM == "int" & AR == " 0.90" & replicate == 1 & A %in% "A101" &
-  SR_sigmaR_om == SDmarg & grepl("y$", dq$species)))
+  EM == "int" & AR == " 0.90" & replicate == 2 & A %in% "A101" &
+  SR_sigmaR_om == SDmarg & bias == "yes"))
 temp <- temp[grepl("^[[:digit:]]", as.character(temp$year)), ]
 temp$year <- as.numeric(as.character(temp$year))
 temp$high <- temp$Value.SPB_em + 1.96 * temp$StdDev.SPB_em
