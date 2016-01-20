@@ -403,3 +403,16 @@ g <- ggplot(temp) +
     function(x) length(unique(x))), aes(label = replicate,
     x = -1, y = 100), vjust = "inward")
 ggsave(file.path(fig_folder, "estimatedAR_sigmaR.png"), g, height = 3.5, width = 8)
+
+###############################################################################
+###############################################################################
+#### Table estimates of bias adjustment
+###############################################################################
+###############################################################################
+temp <- droplevels(subset(sc,
+    A == "A101" & EM %in% allem & SR_sigmaR_om == SDmarg))
+write.csv(aggregate(as.matrix(temp[,
+  c("last_yr_early_em", "first_yr_full_em", "last_yr_full_em",
+    "first_yr_recent_em", "max_bias_adj_em")]) ~
+  EM + AR, data = temp, mean), file.path(fig_folder, "bias_mean.csv"),
+  row.names = FALSE)
