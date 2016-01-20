@@ -1,14 +1,14 @@
 #' Calculate confidence intervals
-calulate_ci <- function(x, coverage = 0.5, verbose = FALSE) {
+calulate_ci <- function(x, coverage = 0.5, verbose = FALSE, years = 81:100) {
   zscore <- qnorm(coverage / 2, lower.tail = FALSE)
   if (verbose) {
     message(paste("A coverage of", coverage, "led to a zscore of",
       round(zscore, 3)))
   }
-  keep <- x[x$year %in% 81:100, ]
+  keep <- x[x$year %in% years, ]
   gnames <- grep("Value\\.", colnames(keep), value = TRUE)
   gnames <- grep("_em$", gnames, value = TRUE)
-  gnames <- sapply(strsplit(gnames, "\\."), "[", 2)
+  gnames <- gsub("Value\\.", "", gnames)
   for(i in seq_along(gnames)) {
     if(grepl("OFLCatch", gnames[i])) next
     cols <- grep(gnames[i], colnames(keep))
