@@ -1,6 +1,9 @@
 
 #' Read in the results
-get_results_all(overwrite_files = TRUE, parallel = doparallel)
+getresults <- FALSE
+if (getresults) {
+  get_results_all(overwrite_files = TRUE, parallel = doparallel)
+}
 sc <- read.csv("ss3sim_scalar.csv")
 ts <- read.csv("ss3sim_ts.csv")
 sc$bias <- ifelse(sc$max_bias_adj_em == -1, "no", "yes")
