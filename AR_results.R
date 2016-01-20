@@ -6,6 +6,7 @@ if (getresults) {
 }
 sc <- read.csv("ss3sim_scalar.csv")
 ts <- read.csv("ss3sim_ts.csv")
+dq <- read.csv("ss3sim_dq.csv")
 sc$bias <- ifelse(sc$max_bias_adj_em == -1, "no", "yes")
 
 #' Calculate relative error
@@ -14,20 +15,20 @@ ts <- calculate_re(ts, add = TRUE)
 
 #' Add max grad and par on bounds
 ts <- data.frame(ts, sc[match(ts$ID, sc$ID), c("max_grad", "params_on_bound_em")])
-# dq <- data.frame(dq, sc[match(dq$ID, sc$ID), c("max_grad", "params_on_bound_em")])
+dq <- data.frame(dq, sc[match(dq$ID, sc$ID), c("max_grad", "params_on_bound_em")])
 
 #' Calculate cis
-# ci <- calulate_ci(dq[, ], verbose = TRUE)
+ci <- calulate_ci(dq, verbose = TRUE)
 
 #' Add names
 sc$AR <- factAR(sc$species)
 sc$EM <- factEM(sc$species)
 ts$AR <- factAR(ts$species)
 ts$EM <- factEM(ts$species)
-# dq$AR <- factAR(dq$species)
-# dq$EM <- factEM(dq$species)
-# ci$AR <- factAR(ci$species)
-# ci$EM <- factEM(ci$species)
+dq$AR <- factAR(dq$species)
+dq$EM <- factEM(dq$species)
+ci$AR <- factAR(ci$species)
+ci$EM <- factEM(ci$species)
 
 #' Set the theme
 theme <- theme_bw() +
