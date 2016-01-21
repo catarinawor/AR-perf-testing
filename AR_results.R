@@ -384,6 +384,37 @@ ggsave(file.path(fig_folder, "estimatedAR_ts.png"), g, height = 3.5, width = 8)
 
 ###############################################################################
 ###############################################################################
+#### Figure estimatedAR for different amounts of data using zero_ext
+###############################################################################
+###############################################################################
+#' Plot autocorrelation for different amounts of data
+x <- "nyears"; y <- "SR_autocorr_em"; z <- "AR"
+xlab <- "Estimated autocorrelation"
+form <- ss3sim:::facet_form(x, NULL, z, NULL)
+temp <- droplevels(subset(sc,
+    !grepl("A91", sc$A) & EM %in% c("zero_ext") & SR_sigmaR_om == SDmarg &
+    A != "A104"))
+temp$nyears <- factor(temp$A, levels = levels(temp$A),
+  labels = nyears.lengthdata[-length(nyears.lengthdata)])
+
+rline <- data.frame("AR" = rep(unique(temp$AR), 1),
+  rep(unique(sc[sc$EM == "true", y]), 1))
+colnames(rline)[2] <- y
+
+g <- ggplot(temp) +
+  geom_histogram(aes_string(y), binwidth = 0.1) +
+  facet_grid(form, scales = "fixed") +
+  geom_vline(aes_string(xintercept = y), linetype = "dashed",
+    data = rline, col = "red") +
+  xlab(expression(rho)) +
+  theme + theme(legend.position = c(0.08, 0.8)) +
+  geom_text(data = aggregate(replicate ~ AR + nyears, data = temp,
+    function(x) length(unique(x))), aes(label = replicate,
+    x = -1, y = 100), vjust = "inward")
+ggsave(file.path(fig_folder, "estimatedAR_ts_zeroext.png"), g, height = 3.5, width = 8)
+
+###############################################################################
+###############################################################################
 #### Figure estimatedAR
 ###############################################################################
 ###############################################################################
