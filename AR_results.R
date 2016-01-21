@@ -363,10 +363,10 @@ form <- ss3sim:::facet_form(x, NULL, z, NULL)
 temp <- droplevels(subset(sc,
     !grepl("A91", sc$A) & EM %in% c("int") & SR_sigmaR_om == SDmarg))
 temp$nyears <- factor(temp$A, levels = levels(temp$A),
-  labels = c(nyears.lengthdata, levels(temp$A)[-c(1:length(nyears.lengthdata))]))
+  labels = nyears.lengthdata[-length(nyears.lengthdata)])
 
-rline <- data.frame("AR" = rep(unique(sc$AR), 1),
-  rep(unique(sc[sc$EM == "true", y]), 3))
+rline <- data.frame("AR" = rep(unique(temp$AR), 1),
+  rep(unique(sc[sc$EM == "true", y]), 1))
 colnames(rline)[2] <- y
 
 g <- ggplot(temp) +
