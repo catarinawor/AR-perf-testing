@@ -361,7 +361,8 @@ x <- "nyears"; y <- "SR_autocorr_em"; z <- "AR"
 xlab <- "Estimated autocorrelation"
 form <- ss3sim:::facet_form(x, NULL, z, NULL)
 temp <- droplevels(subset(sc,
-    !grepl("A91", sc$A) & EM %in% c("int") & SR_sigmaR_om == SDmarg))
+    !grepl("A91", sc$A) & EM %in% c("int") & SR_sigmaR_om == SDmarg &
+    A != "A104"))
 temp$nyears <- factor(temp$A, levels = levels(temp$A),
   labels = nyears.lengthdata[-length(nyears.lengthdata)])
 
