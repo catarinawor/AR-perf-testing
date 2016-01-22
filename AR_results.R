@@ -448,3 +448,15 @@ write.csv(aggregate(as.matrix(temp[,
     "first_yr_recent_em", "max_bias_adj_em")]) ~
   EM + AR, data = temp, mean), file.path(fig_folder, "bias_mean.csv"),
   row.names = FALSE)
+
+###############################################################################
+###############################################################################
+#### r4ss plots
+###############################################################################
+###############################################################################
+temp <- dir(pattern = "A101-D101")[1]
+SS_plots(replist = SS_output(dir =
+  file.path(temp, "1", "em"), ncols = 400),
+  dir = temp)
+file.copy(file.path(temp, "plots", "data_plot.png"),
+  file.path(fig_folder, "data_plot.png"), overwrite = TRUE)
