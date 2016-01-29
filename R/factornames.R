@@ -7,7 +7,7 @@ factAR <- function(x, levels = c(-0.25, 0, 0.25, 0.5, 0.75, 0.9)) {
 }
 
 factEM <- function(x,
-  levels = c("true", "zero", "int", "int_ext", "zero_ext")) {
+  levels = c("True", "Zero", "Internal", "int_ext", "External")) {
   truelevels <- levels(x)
   x <- as.character(x)
   x[x %in% grep("y$|n$", truelevels, value = TRUE)] <- levels[3]

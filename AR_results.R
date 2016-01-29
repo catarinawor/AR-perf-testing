@@ -20,7 +20,9 @@ dq <- data.frame(dq, sc[match(dq$ID, sc$ID), get])
 
 #' Calculate cis
 ci <- calulate_ci(dq, verbose = TRUE)
+ci25 <- calulate_ci(dq, coverage = 95, verbose = TRUE)
 ci <- data.frame(ci, sc[match(ci$ID, sc$ID), get])
+ci25 <- data.frame(ci25, sc[match(ci$ID, sc$ID), get])
 
 #' Add names
 sc$AR <- factAR(sc$species)
@@ -31,6 +33,8 @@ dq$AR <- factAR(dq$species)
 dq$EM <- factEM(dq$species)
 ci$AR <- factAR(ci$species)
 ci$EM <- factEM(ci$species)
+ci25$AR <- factAR(ci25$species)
+ci25$EM <- factEM(ci25$species)
 
 #' Subset
 #' Keep raw data
@@ -43,8 +47,9 @@ sc <- subset(sc, max_grad < 0.01 & params_on_bound_em < 1 & bias == "yes")
 ts <- subset(ts, max_grad < 0.01 & params_on_bound_em < 1 & bias == "yes")
 dq <- subset(dq, max_grad < 0.01 & params_on_bound_em < 1 & bias == "yes")
 ci <- subset(ci, max_grad < 0.01 & params_on_bound_em < 1 & bias == "yes")
-keepem <- c("int", "zero_ext")
-allem <- c("int", "true", "zero", "zero_ext")
+ci25 <- subset(ci25, max_grad < 0.01 & params_on_bound_em < 1 & bias == "yes")
+keepem <- c("Internal", "External")
+allem <- c("Internal", "True", "Zero", "External")
 
 #' Set the theme
 theme <- theme_bw() +
@@ -67,10 +72,11 @@ linewd <- 1.8
 toplot <- sapply(EpsList, function(x) x[, 1])[, sub]
 jpeg(file.path(fig_folder, "exampleAR.jpeg"), quality = 100,
   width = width, height = height/2)
-   matplot(toplot, type = "l", las = 1, lty = 1:NCOL(toplot), col = "black",
-     xlab = "year", ylab = "recruitment deviations", lwd = linewd)
+   matplot(toplot, type = "l", las = 1, lty = c(2, 1, 3), col = "black",
+     xlab = "year", ylab = "recruitment deviations", lwd = linewd,
+     xlim = c(0, 50))
    legend("topleft", legend = as.character(format(AR[sub], digits = 2)),
-     lty = 1:length(sub), bty = "n", lwd = linewd, horiz = TRUE)
+     lty = c(2, 1, 3), bty = "n", lwd = linewd, horiz = TRUE)
 dev.off()
 
 ###############################################################################
@@ -87,7 +93,7 @@ temp <- droplevels(subset(sc,
 
 rline <- data.frame("EM" = rep(keepem, each = 6),
                     "AR" = rep(unique(sc$AR), length(keepem)),
-                    rep(unique(sc[sc$EM == "true", y]), length(keepem)))
+                    rep(unique(sc[sc$EM == "True", y]), length(keepem)))
 colnames(rline)[3] <- y
 
 g <- ggplot(temp) +
@@ -138,6 +144,7 @@ form <- ss3sim:::facet_form(zz, NULL, z, NULL)
 temp <- droplevels(subset(ts,
   A == "A101" & EM %in% allem & SR_sigmaR_om == SDmarg))
 temp$time <- ifelse(temp$year > 80, "forecast", "fishing")
+temp$time[temp$year < 26] <- "burnin"
 
 lims <- list(x = c(25, 100), y = c(-0.5, 0.75))
 
@@ -220,11 +227,11 @@ ggsave(file.path(fig_folder, "tsrec.png"), g,
 ###############################################################################
 #' Plot autocorrelation internal versus external
 x <- "year"; y <- "prop"; z <- "AR"; zz <- "EM"
-xlab <- "year"; ylab <- "Forecast coverage of spawning stock biomass"
+xlab <- "year"; ylab <- "Forecast coverage of spawning biomass"
 form <- ss3sim:::facet_form(zz, NULL, z, NULL)
+
 temp <- droplevels(subset(ci,
   A == "A101" & EM %in% allem & SR_sigmaR_om == SDmarg))
-
 table <- aggregate(in.SPB_em ~ year + AR + EM,
     data = temp,
     function(x) c(sum(x), length(x), sum(x) / length(x)))
@@ -232,24 +239,25 @@ table <- data.frame(table[, -4], table[, 4])
 colnames(table)[4:6] <- c("good", "total", "prop")
 table$year <- as.numeric(as.character(table$year))
 
-temp$diff <- with(temp, as.numeric(high.SPB_em) - as.numeric(low.SPB_em))
-lines <- aggregate(diff ~ year + AR + EM,
-    data = temp,
-    function(x) {
-        y <- (x - max(x)) / max(x)
-        return(mean(abs(y)))
-    })
-lines$year <- as.numeric(as.character(lines$year))
+temp2 <- droplevels(subset(ci25,
+  A == "A101" & EM %in% allem & SR_sigmaR_om == SDmarg))
+table2 <- aggregate(in.SPB_em ~ year + AR + EM,
+    data = temp2, function(x) c(sum(x), length(x), sum(x) / length(x)))
+table2 <- data.frame(table2[, -4], table2[, 4])
+colnames(table2)[4:6] <- c("good", "total", "prop")
+table2$year <- as.numeric(as.character(table$year))
 
 g <- ggplot(table, aes_string(x = x)) +
   geom_point(aes_string(x = x, y = y)) +
   facet_grid(form, scales = "fixed") +
   # geom_line(data = lines, aes_string(x = x, y = "diff")) +
   geom_hline(aes_string(yintercept = 0.5), linetype = "dashed", col = "red") +
+  geom_hline(aes_string(yintercept = 0.75), linetype = "dashed", col = "red") +
   xlab(xlab) + ylab(ylab) +
   geom_text(aes(x = -Inf, y = Inf, label = total),
     hjust = "inward", vjust = "inward") +
-  theme
+  theme +
+  geom_point(data = table2, aes_string(x = x, y = y), pch = 21)
 ggsave(file.path(fig_folder, "coveragessb.png"), g, height = height/75, width = width/50)
 
 ###############################################################################
@@ -259,7 +267,7 @@ ggsave(file.path(fig_folder, "coveragessb.png"), g, height = height/75, width = 
 ###############################################################################
 png(file.path(fig_folder, "replicate.png"))
 temp <- droplevels(subset(dq,
-  EM == "int" & AR == " 0.90" & replicate == 2 & A %in% "A101" &
+  EM == "Internal" & AR == " 0.90" & replicate == 2 & A %in% "A101" &
   SR_sigmaR_om == SDmarg & bias == "yes"))
 temp <- temp[grepl("^[[:digit:]]", as.character(temp$year)), ]
 temp$year <- as.numeric(as.character(temp$year))
@@ -267,7 +275,7 @@ temp$high <- temp$Value.SPB_em + 1.96 * temp$StdDev.SPB_em
 temp$low <- temp$Value.SPB_em - 1.96 * temp$StdDev.SPB_em
 temp <- droplevels(subset(temp, year > 25))
 plot(temp$year, temp$high, ylim = c(0, max(temp$high)), type = "l",
-  xlab = "year", ylab = "Spawning stock biomass for a single replicate",
+  xlab = "year", ylab = "Spawning biomass for a single replicate",
   lty = 2)
 legend("bottomleft", legend = "AR = 0.9", bty = "n")
 lines(temp$year, temp$Value.SPB_em, type = "l")
@@ -281,7 +289,7 @@ dev.off()
 ###############################################################################
 x <- "year"; y <- "Value.SPB_em"; yy <- "Value.SPB_om"
 z <- "AR"; zz <- "EM"
-xlab <- "year"; ylab <- "Spawning stock biomass"
+xlab <- "year"; ylab <- "Spawning biomass"
 form <- ss3sim:::facet_form(zz, NULL, z, NULL)
 temp <- droplevels(subset(dq,
   A %in% "A101" & EM %in% allem & SR_sigmaR_om == SDmarg &
@@ -301,7 +309,8 @@ g <- ggplot(temp, aes_string(x = x)) +
   geom_vline(aes_string(xintercept = 80), linetype = "dashed", col = "black") +
   xlab(xlab) + ylab(ylab) +
   theme + theme(legend.position = c(0.08, 0.8))
-ggsave(file.path(fig_folder, "tsSSB_replicate2.png"), g, height = height/75, width = width/50)
+ggsave(file.path(fig_folder, "tsSSB_replicate2.png"), g,
+       height = height/75, width = width/50)
 
 ###############################################################################
 ###############################################################################
@@ -361,7 +370,7 @@ x <- "nyears"; y <- "SR_autocorr_em"; z <- "AR"
 xlab <- "Estimated autocorrelation"
 form <- ss3sim:::facet_form(x, NULL, z, NULL)
 temp <- droplevels(subset(sc,
-    !grepl("A91", sc$A) & EM %in% c("int") & SR_sigmaR_om == SDmarg &
+    !grepl("A91", sc$A) & EM %in% c("Internal") & SR_sigmaR_om == SDmarg &
     A != "A104"))
 temp$nyears <- factor(temp$A, levels = levels(temp$A),
   labels = nyears.lengthdata[-length(nyears.lengthdata)])
@@ -392,7 +401,7 @@ x <- "nyears"; y <- "SR_autocorr_em"; z <- "AR"
 xlab <- "Estimated autocorrelation"
 form <- ss3sim:::facet_form(x, NULL, z, NULL)
 temp <- droplevels(subset(sc,
-    !grepl("A91", sc$A) & EM %in% c("zero_ext") & SR_sigmaR_om == SDmarg &
+    !grepl("A91", sc$A) & EM %in% c("External") & SR_sigmaR_om == SDmarg &
     A != "A104"))
 temp$nyears <- factor(temp$A, levels = levels(temp$A),
   labels = nyears.lengthdata[-length(nyears.lengthdata)])

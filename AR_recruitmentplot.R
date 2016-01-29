@@ -9,6 +9,15 @@
      lty = 1:length(AR), bty = "n")
    dev.off()
 
+   png(file.path(fig_folder, paste0(spp, "recdevs_iteration001_ms.png")),
+     width = width, height = height * 0.7, res = resolution, units = unit)
+   toplot <- sapply(EpsList[1:3], function(x) x[, 1])
+   matplot(toplot, type = "l", las = 1, lty = c(2, 1, 3), col = "black",
+     xlab = "year", ylab = "recruitment deviations", xlim = c(0, 50))
+   legend("topleft", legend = as.character(format(AR[1:3], digits = 2)),
+     lty = c(2, 1, 3), bty = "n", horiz = TRUE)
+   dev.off()
+
    png(file.path(fig_folder, paste0(spp, "biasadjustmentcheck.png")),
      width = width, height = height, res = resolution, units = unit)
      par(mfrow = c(2, 1), mar = c(0, 4, 0, 0.25), oma = c(5, 1, 1, 1))
