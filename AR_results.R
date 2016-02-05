@@ -376,7 +376,7 @@ temp$nyears <- factor(temp$A, levels = levels(temp$A),
   labels = nyears.lengthdata[-length(nyears.lengthdata)])
 
 rline <- data.frame("AR" = rep(unique(temp$AR), 1),
-  rep(unique(sc[sc$EM == "true", y]), 1))
+  rep(unique(sc[sc$EM == "True", y]), 1))
 colnames(rline)[2] <- y
 
 g <- ggplot(temp) +
@@ -388,7 +388,7 @@ g <- ggplot(temp) +
   theme + theme(legend.position = c(0.08, 0.8)) +
   geom_text(data = aggregate(replicate ~ AR + nyears, data = temp,
     function(x) length(unique(x))), aes(label = replicate,
-    x = -1, y = 100), vjust = "inward")
+    x = -1, y = 100), vjust = "inward", hjust = "inward")
 ggsave(file.path(fig_folder, "estimatedAR_ts.png"), g, height = 3.5, width = 8)
 
 ###############################################################################
@@ -407,7 +407,7 @@ temp$nyears <- factor(temp$A, levels = levels(temp$A),
   labels = nyears.lengthdata[-length(nyears.lengthdata)])
 
 rline <- data.frame("AR" = rep(unique(temp$AR), 1),
-  rep(unique(sc[sc$EM == "true", y]), 1))
+  rep(unique(sc[sc$EM == "True", y]), 1))
 colnames(rline)[2] <- y
 
 g <- ggplot(temp) +
@@ -419,7 +419,7 @@ g <- ggplot(temp) +
   theme + theme(legend.position = c(0.08, 0.8)) +
   geom_text(data = aggregate(replicate ~ AR + nyears, data = temp,
     function(x) length(unique(x))), aes(label = replicate,
-    x = -1, y = 100), vjust = "inward")
+    x = -1, y = 100), vjust = "inward", hjust = "inward")
 ggsave(file.path(fig_folder, "estimatedAR_ts_zeroext.png"), g, height = 3.5, width = 8)
 
 ###############################################################################
