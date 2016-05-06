@@ -2,10 +2,16 @@
 #
 # Title: Performance testing SS3 with autocorrelated recruitment data.
 #
-# Authors (order subject to change): Councill, E., J. Thorson, L. Brooks, K. Johnson, R. Methot
+# Authors (order subject to change):
+# Johnson, K. F.,
+# Councill, E.,
+# Thorson, J. T.
+# Brooks, E.
+# Methot, R. D.
+# Punt, A. E.
 #
 # Date written: November 2, 2014
-# Date last modified: September 23, 2015
+# Date last modified: May 05, 2016
 # Last modifying author: KFJ
 #
 ###############################################
@@ -19,10 +25,10 @@ devtools::install_github("r4ss/r4ss@master")
  library("ss3models")
  library("r4ss")
  library(doParallel) #For parallel
- library(foreach)
- library(ggplot2)
+ library(foreach)    #For parallel
+ library(ggplot2)    #For plotting
  library(knitr) # To compile output
- library(xtable)
+ library(xtable)# To create tables
 
 # Variable inputs
  doparallel <- TRUE
