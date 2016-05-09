@@ -15,7 +15,7 @@ fitbias <- function(scenario, iteration, dir, numberofcolumns = 300, verbose) {
     newctl = file.path(empath, "em.ctl"))
 
   keepgoodfiles(dir = empath)
-  bin <- paste(ss3sim::get_bin(), "exe", sep = ".")
+  bin <- normalizePath(ss3sim::get_bin())
   file.copy(bin, file.path(empath, basename(bin)))
   setwd(empath)
   system(basename(bin), invisible = TRUE, show.output.on.console = verbose)
