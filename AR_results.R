@@ -20,7 +20,7 @@ dq <- data.frame(dq, sc[match(dq$ID, sc$ID), get])
 
 #' Calculate cis
 ci <- calulate_ci(dq, verbose = TRUE)
-ci25 <- calulate_ci(dq, coverage = 95, verbose = TRUE)
+ci25 <- calulate_ci(dq, coverage = .95, verbose = TRUE)
 ci <- data.frame(ci, sc[match(ci$ID, sc$ID), get])
 ci25 <- data.frame(ci25, sc[match(ci$ID, sc$ID), get])
 
@@ -42,6 +42,7 @@ raw.sc <- sc
 raw.ts <- ts
 raw.dq <- dq
 raw.ci <- ci
+raw.25 <- ci25
 #' subset
 sc <- subset(sc, max_grad < 0.01 & params_on_bound_em < 1 & bias == "yes")
 ts <- subset(ts, max_grad < 0.01 & params_on_bound_em < 1 & bias == "yes")
