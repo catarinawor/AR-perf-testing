@@ -27,6 +27,7 @@ devtools::install_github("r4ss/r4ss@master")
  library(doParallel) #For parallel
  library(foreach)    #For parallel
  library(ggplot2)    #For plotting
+ library(gridExtra)  #For plotting
  library(knitr) # To compile output
  library(xtable)# To create tables
 
