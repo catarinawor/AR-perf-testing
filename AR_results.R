@@ -44,11 +44,16 @@ raw.dq <- dq
 raw.ci <- ci
 raw.25 <- ci25
 #' subset
-sc <- subset(sc, max_grad < 0.01 & params_on_bound_em < 1 & bias == "yes")
-ts <- subset(ts, max_grad < 0.01 & params_on_bound_em < 1 & bias == "yes")
-dq <- subset(dq, max_grad < 0.01 & params_on_bound_em < 1 & bias == "yes")
-ci <- subset(ci, max_grad < 0.01 & params_on_bound_em < 1 & bias == "yes")
-ci25 <- subset(ci25, max_grad < 0.01 & params_on_bound_em < 1 & bias == "yes")
+sc <- subset(sc, max_grad < 0.01 & params_on_bound_em < 1 & bias == "yes" &
+  !grepl("m", scenario))
+ts <- subset(ts, max_grad < 0.01 & params_on_bound_em < 1 & bias == "yes" &
+  !grepl("m", scenario))
+dq <- subset(dq, max_grad < 0.01 & params_on_bound_em < 1 & bias == "yes" &
+  !grepl("m", scenario))
+ci <- subset(ci, max_grad < 0.01 & params_on_bound_em < 1 & bias == "yes" &
+  !grepl("m", scenario))
+ci25 <- subset(ci25, max_grad < 0.01 & params_on_bound_em < 1 & bias == "yes" &
+  !grepl("m", scenario))
 keepem <- c("Internal", "External")
 allem <- c("Internal", "True", "Zero", "External")
 
@@ -246,7 +251,7 @@ table2 <- aggregate(in.SPB_em ~ year + AR + EM,
     data = temp2, function(x) c(sum(x), length(x), sum(x) / length(x)))
 table2 <- data.frame(table2[, -4], table2[, 4])
 colnames(table2)[4:6] <- c("good", "total", "prop")
-table2$year <- as.numeric(as.character(table$year))
+table2$year <- as.numeric(as.character(table2$year))
 
 g <- ggplot(table, aes_string(x = x)) +
   geom_point(aes_string(x = x, y = y)) +
@@ -256,10 +261,98 @@ g <- ggplot(table, aes_string(x = x)) +
   geom_hline(aes_string(yintercept = 0.75), linetype = "dashed", col = "red") +
   xlab(xlab) + ylab(ylab) +
   geom_text(aes(x = -Inf, y = Inf, label = total),
+    data = table[!duplicated(table$total), ],
     hjust = "inward", vjust = "inward") +
   theme +
   geom_point(data = table2, aes_string(x = x, y = y), pch = 21)
 ggsave(file.path(fig_folder, "coveragessb.png"), g, height = height/75, width = width/50)
+
+###############################################################################
+###############################################################################
+#### Less perfect plot
+###############################################################################
+###############################################################################
+#' Plot autocorrelation internal versus external
+x <- "year"; y <- "prop"; z <- "AR"; zz <- "EM"
+xlab <- "year"; ylab <- "Forecast coverage of spawning biomass"
+form <- ss3sim:::facet_form(zz, NULL, NULL, NULL)
+
+temp <- subset(raw.ci, max_grad < 0.01 & params_on_bound_em < 1 & bias == "yes" &
+  grepl("m", scenario) & EM %in% allem)
+table <- aggregate(in.SPB_em ~ year + EM,
+    data = temp,
+    function(x) c(sum(x), length(x), sum(x) / length(x)))
+table <- data.frame(table[, -3], table[, 3])
+colnames(table)[3:5] <- c("good", "total", "prop")
+table$year <- as.numeric(as.character(table$year))
+
+temp2 <- droplevels(subset(ci25, max_grad < 0.01 & params_on_bound_em < 1 &
+  bias == "yes" & grepl("m", scenario) & EM %in% allem))
+table2 <- aggregate(in.SPB_em ~ year + EM,
+    data = temp2, function(x) c(sum(x), length(x), sum(x) / length(x)))
+table2 <- data.frame(table2[, -3], table2[, 3])
+colnames(table2)[3:5] <- c("good", "total", "prop")
+table2$year <- as.numeric(as.character(table2$year))
+
+temp3 <- subset(raw.sc, max_grad < 0.01 & params_on_bound_em < 1 & bias == "yes" &
+  grepl("m", scenario) & EM %in% allem)
+table3 <- aggregate(SR_BH_steep_re ~ EM, data = temp3, mean)
+# apply(as.matrix(temp3[, grepl("re", colnames(raw.sc))]), 2, mean)
+table3$SR_BH_steep_re <- format(
+  as.numeric(100 * table3$SR_BH_steep_re),
+  digits = 3)
+
+g1 <- ggplot(table, aes_string(x = x)) +
+  geom_point(aes_string(x = x, y = y)) +
+  facet_grid(form, scales = "fixed") +
+  # geom_line(data = lines, aes_string(x = x, y = "diff")) +
+  geom_hline(aes_string(yintercept = 0.5), linetype = "dashed", col = "red") +
+  geom_hline(aes_string(yintercept = 0.75), linetype = "dashed", col = "red") +
+  xlab(xlab) + ylab(ylab) +
+  geom_text(aes(x = -Inf, y = Inf, label = total),
+    data = table[!duplicated(table$EM), ],
+    hjust = "inward", vjust = "inward") +
+  theme + ylim(c(0, 0.8)) +
+  geom_point(data = table2, aes_string(x = x, y = y), pch = 21) +
+  geom_text(aes(x = Inf, y = Inf, label = SR_BH_steep_re),
+    data = table3, hjust = "inward", vjust = "inward")
+
+#' Plot Spawning Stock Biomass internal versus external
+#' for the maximum amount of data
+x <- "year"; y <- "SpawnBio_re"; zz <- "EM"
+xlab <- "year"; ylab <- "Relative error in spawning biomass"
+form <- ss3sim:::facet_form(zz, NULL, NULL, NULL)
+temp <- subset(raw.ts, max_grad < 0.01 &
+  params_on_bound_em < 1 & bias == "yes" &
+  grepl("m", scenario) & EM %in% allem)
+temp$time <- ifelse(temp$year > 80, "forecast", "fishing")
+temp$time[temp$year < 41] <- "burnin"
+
+lims <- list(x = c(41, 100), y = c(-0.6, 4.5))
+
+g2 <- ggplot(data = temp, aes_string(x = x)) +
+  geom_boxplot(aes_string(group = x, y = y)) +
+  facet_grid(form, scales = "fixed") +
+  geom_hline(aes_string(yintercept = 0), linetype = "dashed", col = "red") +
+  geom_vline(aes_string(xintercept = 80), linetype = "dashed", col = "red") +
+  xlab(xlab) + ylab(ylab) +
+  xlim(lims$x) + ylim(lims$y) +
+  theme + theme(legend.position = c(0.08, 0.8)) +
+  # Calculate the Mean Absolute relative error during forecast
+  geom_text(data = aggregate(SpawnBio_re ~ A + EM + time,
+    data = subset(temp, time == "forecast"),
+    function(x) round(mean(abs(x)), 3)), aes(label = SpawnBio_re,
+    x = lims$x[2], y = lims$y[1]), hjust = "inward") +
+  # Calculate the Mean Absolute relative error during fishing
+  geom_text(data = aggregate(SpawnBio_re ~ A + EM + time,
+    data = subset(temp, time == "fishing"),
+    function(x) round(mean(abs(x)), 3)), aes(label = SpawnBio_re,
+    x = lims$x[1], y = lims$y[1]), hjust = "inward") +
+  theme(strip.text.y = element_blank())
+require(gridExtra)
+g <- grid.arrange(g2, g1, ncol = 2, widths = c(1, 1.25))
+ggsave(file.path(fig_folder, "lessperfect.png"), g,
+  height = height/85, width = width/50/ length(AR) * 2.1)
 
 ###############################################################################
 ###############################################################################
