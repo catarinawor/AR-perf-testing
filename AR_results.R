@@ -299,8 +299,8 @@ temp3 <- subset(raw.sc, max_grad < 0.01 & params_on_bound_em < 1 & bias == "yes"
 table3 <- aggregate(SR_BH_steep_re ~ EM, data = temp3, mean)
 # apply(as.matrix(temp3[, grepl("re", colnames(raw.sc))]), 2, mean)
 table3$SR_BH_steep_re <- format(
-  as.numeric(100 * table3$SR_BH_steep_re),
-  digits = 3)
+  as.numeric(table3$SR_BH_steep_re),
+  digits = 2)
 
 g1 <- ggplot(table, aes_string(x = x)) +
   geom_point(aes_string(x = x, y = y)) +
