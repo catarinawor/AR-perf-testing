@@ -138,7 +138,7 @@ if (doparallel) {
 source("generateCaseFiles.R")
 
 # Copy executable into ss3sim bin
-binfolder <- dirname(get_bin())
+binfolder <- gsub('\\"', '', dirname(get_bin()))
 ss3simtpl <- list.files(binfolder, full.names = TRUE)
 ss3simnew <- file.path(dirname(ss3simtpl), c("opt", "safe"))
 ignore <- file.rename(ss3simtpl, ss3simnew)
