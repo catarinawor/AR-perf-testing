@@ -32,9 +32,9 @@ the corresponding author, at kfjohns@uw.edu
 
 ## Simulation
 ### Instructions for installing the correct version of ss3sim
-  devtools::install.github("r4ss/r4ss@master")
-  devtools::install.github("ss3sim/ss3sim@master")
-  devtools::install.github("ss3sim/ss3models@master")
+  devtools::install_github("r4ss/r4ss@2622cfe")
+  devtools::install_github("ss3sim/ss3sim@5b64ec3")
+  devtools::install_github("ss3sim/ss3models@master")
 ### Running the simulation
 To run the simulation start with [AR_Simulations](AR-perf-testing/AR_Simulations.r),
 which will install of the necessary packages and run each script.
