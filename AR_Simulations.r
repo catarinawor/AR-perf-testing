@@ -17,9 +17,9 @@
 ###############################################
 
 # Packages
-devtools::install_github("ss3sim/ss3sim@master") #current
-devtools::install_github("ss3sim/ss3models@master")
-devtools::install_github("r4ss/r4ss@master")
+devtools::install_github("ss3sim/ss3sim@5b64ec3") #current
+devtools::install_github("ss3sim/ss3models@ce54372")
+devtools::install_github("r4ss/r4ss@5b64ec3")
 
  library("ss3sim")
  library("ss3models")
